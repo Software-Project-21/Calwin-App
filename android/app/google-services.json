@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "886637231721",
+    "project_id": "calwin-smartcalendar",
+    "storage_bucket": "calwin-smartcalendar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886637231721:android:866ba6821596b1d5292cf8",
+        "android_client_info": {
+          "package_name": "com.example.calwin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886637231721-4jfgm1rl6uu5jprpb7a9u21sqjs8a2bq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm6WuBTKTKXVFMYVqVOjwXIhDJ2JZjVKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886637231721-4jfgm1rl6uu5jprpb7a9u21sqjs8a2bq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

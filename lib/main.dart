@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // CustomPaint(painter: BackgroundPainter(),),
-
             LoginScreen(),
           ],
         ),

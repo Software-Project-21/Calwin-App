@@ -6,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 
-
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -16,22 +14,21 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 
   GoogleSignIn _googleSignIn = GoogleSignIn();
-  FirebaseAuth _auth2;
+  FirebaseAuth _auth;
   bool isUserSignedIn = false;
 
-  final _auth = FirebaseAuth.instance;
+  final _authemailpass = FirebaseAuth.instance;
   String email;
   String password;
 
   @override
   void initState() {
     super.initState();
-    initApp();
+    // initApp();
   }
-
   void initApp() async {
     FirebaseApp defaultApp = await Firebase.initializeApp();
-    _auth2 = FirebaseAuth.instanceFor(app: defaultApp);
+    _auth = FirebaseAuth.instanceFor(app: defaultApp);
     // immediately check whether the user is signed in
     checkIfUserIsSignedIn();
   }
@@ -42,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
       isUserSignedIn = userSignedIn;
     });
   }
-
   Future<User> _handleSignIn() async {
     User user;
     bool userSignedIn = await _googleSignIn.isSignedIn();
@@ -53,10 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (isUserSignedIn) {
       user = _auth.currentUser;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
     }
     else {
-      print('Now here <<<<<<<<<<<<<<<<<<<<<<<<<');
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -74,7 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return user;
   }
-
   void onGoogleSignIn(BuildContext context) async {
     User user = await _handleSignIn();
     var userSignedIn = await Navigator.push(
@@ -88,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
       isUserSignedIn = userSignedIn == null ? true : false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -123,11 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         SizedBox(height: 20,),
         ElevatedButton(
-          onPressed: (){
+          onPressed: ()async{
             try {
-              final user = _auth.signInWithEmailAndPassword(
+              final user = await _authemailpass.signInWithEmailAndPassword(
                   email: email, password: password);
               if(user!=null){
+                print('>>>');
+                print(user.hashCode);
+                print('<<<');
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
               }
             }catch(e){
@@ -147,7 +144,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-
   Widget _signInButton() {
     return OutlinedButton(
       onPressed: (){

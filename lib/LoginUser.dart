@@ -33,7 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
           (data) async {
         final file = RiveFile();
 
-        // Load the RiveFile from the binary data.
         if (file.import(data)) {
           // The artboard is the root of the animation and gets drawn in the
           // Rive widget.

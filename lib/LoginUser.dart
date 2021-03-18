@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              HomeScreen()),
+              HomeScreen(user: user,)),
     );
 
     setState(() {
@@ -154,10 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   final user = await _authemailpass.signInWithEmailAndPassword(
                       email: email, password: password);
                   if(user!=null){
-                    print('>>>');
                     print(user.hashCode);
-                    print('<<<');
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen(user: user.user,)));
                   }
                 }catch(e){
                   print(e);

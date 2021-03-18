@@ -92,7 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       if(newUser!=null){
                         Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context)=>HomeScreen())
+                            MaterialPageRoute(builder: (context)=>HomeScreen(user: newUser.user,))
                         );
                       }
                     }catch(e){

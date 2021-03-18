@@ -32,6 +32,7 @@ flutter:
   assets:
      - assets/google_logo.png
      - assets/marty_v6.riv
+     - assets/default_profile.png
 
   
   # fonts:

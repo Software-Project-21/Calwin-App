@@ -18,10 +18,12 @@ dependencies:
   google_sign_in: ^5.0.0
   rive: ^0.6.8
   font_awesome_flutter: ^8.10.0
+  table_calendar: ^2.3.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 flutter:
 

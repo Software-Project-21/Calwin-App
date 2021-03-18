@@ -16,6 +16,7 @@ dependencies:
   firebase_auth: ^1.0.1
   cloud_firestore: ^1.0.1
   google_sign_in: ^5.0.0
+  rive: ^0.6.8
   font_awesome_flutter: ^8.10.0
 
 dev_dependencies:
@@ -28,7 +29,7 @@ flutter:
 
   assets:
      - assets/google_logo.png
-#     - images/a_dot_ham.jpeg
+     - assets/marty_v6.riv
 
   
   # fonts:

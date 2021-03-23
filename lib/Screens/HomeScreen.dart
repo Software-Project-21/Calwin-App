@@ -1,22 +1,49 @@
+import 'package:calwin/Screens/sign_in.dart';
+import 'package:calwin/Utils/Authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:calwin/Model/User.dart';
 
 class HomeScreen extends StatefulWidget {
-  final User user;
-  HomeScreen({this.user});
+  const HomeScreen({Key? key, required User user})
+      : _user = user,
+        super(key: key);
+
+  final User _user;
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isSigningOut = false;
 
-  CalendarController _controller;
+  Route _routeToSignInScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+  late CalendarController _controller;
+  late User _user;
   @override
   void initState() {
     super.initState();
+    _user = widget._user;
     _controller = CalendarController();
   }
   @override
@@ -37,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                       padding: EdgeInsets.only(left: 15,top: 15),
                       child: Text(
-                      'Welcome to your team Calendar\n'+widget.user.displayName,
+                      'Welcome to your team Calendar\n'+widget._user.email!,
                       style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 20.0,
@@ -49,9 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   CircleAvatar(
                     radius: MediaQuery.of(context).size.width*0.1,
-                    backgroundImage: NetworkImage(widget.user.photoURL==null?"https://www.ucsfdentalcenter.org/sites/default/files/styles/dent_profile_teaser_526w/public/default_profile_2x_1024.png?itok=S6PqnjvS&timestamp=1503035595":widget.user.photoURL),
+                    backgroundImage: NetworkImage(_user.photoURL!),
                   ),
-
                 ],
               ),
             ),
@@ -96,6 +122,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       date.day.toString(),
                       style: TextStyle(color: Colors.white),
                     )),
+              ),
+            ),
+            _isSigningOut
+                ? CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            )
+                : ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Colors.redAccent,
+                ),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              onPressed: () async {
+                setState(() {
+                  _isSigningOut = true;
+                });
+                await Authentication.signOut(context: context);
+                setState(() {
+                  _isSigningOut = false;
+                });
+                Navigator.of(context)
+                    .pushReplacement(_routeToSignInScreen());
+              },
+              child: Padding(
+                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2,
+                  ),
+                ),
               ),
             ),
           ],

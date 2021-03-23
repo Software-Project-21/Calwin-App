@@ -5,9 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:calwin/Model/User.dart';
+import 'holidays.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key,User user})
+  const HomeScreen({Key key, User user})
       : _user = user,
         super(key: key);
 
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         var curve = Curves.ease;
 
         var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),
@@ -38,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  String dateDes;
   CalendarController _controller;
   User _user;
   @override
@@ -46,47 +49,68 @@ class _HomeScreenState extends State<HomeScreen> {
     _user = widget._user;
     _controller = CalendarController();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Calwin: The Smart Calendar'),
+        title: Text(
+          'Calwin: The Smart Calendar',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Center(
-              child: Row(
-                children:[
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.7,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15,top: 15),
-                      child: Text(
-                      'Welcome to your team Calendar\n'+widget._user.email,
-                      style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 20.0,
-                          fontFamily: 'Pacifico',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.bold),
+            Container(
+              height: 150.0,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: NetworkImage(
+                        "https://wallpaperaccess.com/full/4075093.jpg"),
+                    colorFilter: new ColorFilter.mode(
+                        Colors.black.withOpacity(0.8), BlendMode.dstATop),
+                    fit: BoxFit.cover),
+              ),
+              child: Center(
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15, top: 15),
+                        child: Text(
+                          'Welcome to your team Calendar\n' +
+                              widget._user.email,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontFamily: 'Pacifico',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                  ),
-                  CircleAvatar(
-                    radius: MediaQuery.of(context).size.width*0.1,
-                    backgroundImage: NetworkImage(_user.photoURL),
-                  ),
-                ],
+                    CircleAvatar(
+                      radius: MediaQuery.of(context).size.width * 0.1,
+                      backgroundImage: NetworkImage(_user.photoURL),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 40.0),
             TableCalendar(
               calendarController: _controller,
+              holidays: holidays_list,
               calendarStyle: CalendarStyle(
-                  selectedColor: Theme.of(context).primaryColor,
-                  weekdayStyle: TextStyle(fontSize: 16.0),
+                  holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
+                  selectedColor: Colors.deepOrange[400],
+                  todayColor: Colors.deepOrange[200],
+                  markersColor: Colors.brown[700],
+                  weekdayStyle: TextStyle(fontSize: 16.0, color: Colors.black),
                   todayStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0,
@@ -94,15 +118,23 @@ class _HomeScreenState extends State<HomeScreen> {
               headerStyle: HeaderStyle(
                 centerHeaderTitle: true,
                 formatButtonDecoration: BoxDecoration(
-                  color: Colors.blueGrey,
-                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.deepOrange[400],
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
-                formatButtonTextStyle: TextStyle(color: Colors.white),
+                formatButtonTextStyle:
+                    TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
                 formatButtonShowsNext: false,
               ),
               startingDayOfWeek: StartingDayOfWeek.monday,
               builders: CalendarBuilders(
-                selectedDayBuilder: (context, date, events) => Container(
+                selectedDayBuilder: (context, date, events) {
+                  // if (holidays_list.containsKey(
+                  //     new DateTime(date.year, date.month, date.day))) {
+                  //   if (holidays_list[new DateTime(date.year, date.month, date.day)] != null)
+                  //     getHoliday(date);
+                  //
+                  // }
+                  return Container(
                     margin: const EdgeInsets.all(4.0),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
@@ -111,7 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       date.day.toString(),
                       style: TextStyle(color: Colors.white),
-                    )),
+                    ),
+                  );
+                },
                 todayDayBuilder: (context, date, events) => Container(
                     margin: const EdgeInsets.all(4.0),
                     alignment: Alignment.center,
@@ -122,50 +156,96 @@ class _HomeScreenState extends State<HomeScreen> {
                       date.day.toString(),
                       style: TextStyle(color: Colors.white),
                     )),
+                markersBuilder: (context, date, events, holidays) {
+                  final children = <Widget>[];
+                  if (holidays.isNotEmpty) {
+                    children.add(
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: _buildHolidaysMarker(date),
+                      ),
+                    );
+                  }
+                  return children;
+                },
               ),
+              onDaySelected: (date, events, holidays) {
+                _onDaySelected(date);
+              },
             ),
             _isSigningOut
                 ? CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            )
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
                 : ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Colors.redAccent,
-                ),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.redAccent,
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        _isSigningOut = true;
+                      });
+                      await Authentication.signOut(context: context);
+                      setState(() {
+                        _isSigningOut = false;
+                      });
+                      Navigator.of(context)
+                          .pushReplacement(_routeToSignInScreen());
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+            Container(
+              child: Text(
+                dateDes == null ? "" : dateDes,
+                style: TextStyle(color: Colors.black),
               ),
-              onPressed: () async {
-                setState(() {
-                  _isSigningOut = true;
-                });
-                await Authentication.signOut(context: context);
-                setState(() {
-                  _isSigningOut = false;
-                });
-                Navigator.of(context)
-                    .pushReplacement(_routeToSignInScreen());
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-            ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  String getHoliday(DateTime curDate) {
+    print(holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)]
+        .single);
+    return holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)]
+        .single;
+  }
+
+  Widget _buildHolidaysMarker(DateTime curDate) {
+    return Icon(
+      Icons.icecream,
+      color: Colors.redAccent,
+    );
+  }
+
+  void _onDaySelected(DateTime date) {
+    setState(() {
+      if (holidays_list
+          .containsKey(new DateTime(date.year, date.month, date.day)))
+        dateDes = getHoliday(date);
+      else
+        dateDes = "";
+    });
   }
 }

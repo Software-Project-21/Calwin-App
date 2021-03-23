@@ -7,7 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:calwin/Model/User.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required User user})
+  const HomeScreen({Key key,User user})
       : _user = user,
         super(key: key);
 
@@ -38,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  late CalendarController _controller;
-  late User _user;
+  CalendarController _controller;
+  User _user;
   @override
   void initState() {
     super.initState();
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                       padding: EdgeInsets.only(left: 15,top: 15),
                       child: Text(
-                      'Welcome to your team Calendar\n'+widget._user.email!,
+                      'Welcome to your team Calendar\n'+widget._user.email,
                       style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 20.0,
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   CircleAvatar(
                     radius: MediaQuery.of(context).size.width*0.1,
-                    backgroundImage: NetworkImage(_user.photoURL!),
+                    backgroundImage: NetworkImage(_user.photoURL),
                   ),
                 ],
               ),

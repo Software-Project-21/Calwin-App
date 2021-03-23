@@ -8,11 +8,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
   static Future<FirebaseApp> initializeFirebase({
-    required BuildContext context,
+    BuildContext context,
   }) async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
 
-    User? user = FirebaseAuth.instance.currentUser;
+    User user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       Navigator.of(context).pushReplacement(
@@ -27,13 +27,13 @@ class Authentication {
     return firebaseApp;
   }
 
-  static Future<User?> signInWithGoogle({required BuildContext context}) async {
+  static Future<User> signInWithGoogle({BuildContext context}) async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
+    User user;
 
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount? googleSignInAccount =
+    final GoogleSignInAccount googleSignInAccount =
     await googleSignIn.signIn();
 
     if (googleSignInAccount != null) {
@@ -78,7 +78,7 @@ class Authentication {
     }
   }
 
-  static SnackBar customSnackBar({required String content}) {
+  static SnackBar customSnackBar({ String content}) {
     return SnackBar(
       backgroundColor: Colors.black,
       content: Text(
@@ -88,7 +88,7 @@ class Authentication {
     );
   }
 
-  static Future<void> signOut({required BuildContext context}) async {
+  static Future<void> signOut({ BuildContext context}) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {

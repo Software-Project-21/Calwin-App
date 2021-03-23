@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.9.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,6 +22,7 @@ dependencies:
   table_calendar: ^2.3.3
   loading: ^1.0.2
   shared_preferences: ^2.0.5
+  animated_text_kit: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +37,10 @@ flutter:
      - assets/google_logo.png
      - assets/marty_v6.riv
      - assets/default_profile.png
+     - assets/event_pages.riv
+     - assets/event_pages2.riv
+     - assets/knight063.riv
+     - assets/iron_giant2.riv
 
   
   # fonts:

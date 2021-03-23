@@ -1,0 +1,11 @@
+<canvas id="canvas"></canvas>
+<script src="https://unpkg.com/rive-js@0.0.4/dist/rive.js"></script>
+<script>
+  // autoplays the first animation in the default artboard
+  new Rive({
+    src: 'https://cdn.rive.app/animations/documents3.riv',
+    canvas: document.getElementById('canvas'),
+    autoplay: true,
+    layout: new Rive.Layout('fill', 'center'),
+  })
+</script>

@@ -56,7 +56,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       isRepeatingAnimation: false,
                       textStyle: TextStyle(
                           fontSize: 80.0,
-                          fontFamily: "Agne"
+                          fontFamily: "Agne",
+                          color: Colors.white,
                       ),
                       textAlign: TextAlign.start,
                     ),

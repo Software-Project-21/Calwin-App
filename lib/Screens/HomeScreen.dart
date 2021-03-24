@@ -177,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 markersBuilder: (context, date, events, holidays) {
                   final children = <Widget>[];
                   if (holidays.isNotEmpty) {
+                    print(1);
                     children.add(
                       Positioned(
                         right: -2,

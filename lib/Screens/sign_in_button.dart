@@ -1,9 +1,10 @@
 import 'package:calwin/Model/User.dart';
-import 'package:calwin/Screens/HomeScreen.dart';
 import 'package:calwin/Utils/Authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'HomeScreen.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   @override

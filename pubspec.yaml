@@ -24,6 +24,10 @@ dependencies:
   shared_preferences: ^2.0.5
   animated_text_kit: ^4.0.0
   http: ^0.13.1
+  google_fonts:
+  sqflite:
+  intl:
+
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +40,7 @@ flutter:
 
   assets:
      - assets/google_logo.png
+     - assets/bgtop.jpeg
      - assets/marty_v6.riv
      - assets/default_profile.png
      - assets/event_pages.riv

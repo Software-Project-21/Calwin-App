@@ -12,14 +12,13 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-
   Artboard _riveArtboard;
-  RiveAnimationController _controller ;
+  RiveAnimationController _controller;
   @override
   void initState() {
     super.initState();
     rootBundle.load('assets/marty_v6.riv').then(
-          (data) async {
+      (data) async {
         final file = RiveFile();
         if (file.import(data)) {
           final artboard = file.mainArtboard;
@@ -29,6 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,47 +40,50 @@ class _SignInScreenState extends State<SignInScreen> {
             height: MediaQuery.of(context).size.height,
             child: _riveArtboard == null
                 ? const SizedBox()
-                : Rive(artboard: _riveArtboard,fit: BoxFit.fitHeight,),
+                : Rive(
+                    artboard: _riveArtboard,
+                    fit: BoxFit.fitHeight,
+                  ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height*0.4,
-              width: MediaQuery.of(context).size.width,
-              child:Center(
-                child: Column(
-                  children:[
-                    TypewriterAnimatedTextKit(
-                      text: [
-                        " CALWIN"
-                      ],
-                      speed: Duration(milliseconds: 200),
-                      isRepeatingAnimation: false,
-                      textStyle: TextStyle(
-                          fontSize: 80.0,
-                          fontFamily: "Agne"
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height*0.11,),
-                    FutureBuilder(
-                      future: Authentication.initializeFirebase(context: context),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Error initializing Firebase');
-                        } else if (snapshot.connectionState == ConnectionState.done) {
-                          return GoogleSignInButton();
-                        }
-                        return CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.orange,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+            top: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width,
+            child: Center(
+              child: Column(
+                children: [
+                  TypewriterAnimatedTextKit(
+                    text: [" CALWIN"],
+                    speed: Duration(milliseconds: 200),
+                    isRepeatingAnimation: false,
+                    textStyle: TextStyle(
+                        fontSize: 80.0,
+                        fontFamily: "Agne",
+                        color: Colors.white),
+                    textAlign: TextAlign.start,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.11,
+                  ),
+                  FutureBuilder(
+                    future: Authentication.initializeFirebase(context: context),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Error initializing Firebase');
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.done) {
+                        return GoogleSignInButton();
+                      }
+                      return CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.orange,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
+            ),
           ),
-
         ],
       ),
     );

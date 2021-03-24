@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                     image: NetworkImage(
-                        "https://wallpaperaccess.com/full/4075093.jpg"),
+                        "https://image.freepik.com/free-vector/colorful-abstract-wallpaper-design_23-2148467625.jpg"),
                     colorFilter: new ColorFilter.mode(
                         Colors.black.withOpacity(0.8), BlendMode.dstATop),
                     fit: BoxFit.cover),
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.only(left: 15, top: 15),
                         child: Text(
                           'Welcome to your team Calendar\n' +
-                              widget._user.email,
+                              widget._user.displayName,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
@@ -117,17 +117,24 @@ class _HomeScreenState extends State<HomeScreen> {
               calendarController: _controller,
               holidays: holidays_list,
               calendarStyle: CalendarStyle(
-                  holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
-                  selectedColor: Colors.deepOrange[400],
-                  todayColor: Colors.deepOrange[200],
-                  markersColor: Colors.brown[700],
-                  weekdayStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                  todayStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                      color: Colors.white)),
+                holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
+                selectedColor: Colors.deepOrange[400],
+                todayColor: Colors.deepOrange[200],
+                markersColor: Colors.brown[700],
+                weekdayStyle: TextStyle(fontSize: 16.0, color: Colors.black),
+                todayStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: Colors.white),
+              ),
               headerStyle: HeaderStyle(
+                leftChevronIcon:
+                    Icon(Icons.keyboard_arrow_left_rounded, color: Colors.red),
+                rightChevronIcon:
+                    Icon(Icons.keyboard_arrow_right_rounded, color: Colors.red),
                 centerHeaderTitle: true,
+                titleTextStyle:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                 formatButtonDecoration: BoxDecoration(
                   color: Colors.deepOrange[400],
                   borderRadius: BorderRadius.circular(16.0),
@@ -149,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     margin: const EdgeInsets.all(4.0),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: Colors.deepOrange[200],
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Text(
                       date.day.toString(),
@@ -185,10 +192,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 _onDaySelected(date);
               },
             ),
-            Container(
-              child: Text(
-                dateDes == null ? "" : dateDes,
-                style: TextStyle(color: Colors.black),
+            SizedBox(height: 30.0),
+            Center(
+              child: Container(
+                child: Text(
+                  dateDes == null ? "" : dateDes,
+                  style: TextStyle(color: Colors.red, fontSize: 18.0),
+                ),
               ),
             )
           ],

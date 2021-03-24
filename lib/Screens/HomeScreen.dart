@@ -55,10 +55,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          'Calwin: The Smart Calendar',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Calwin: The Smart Calendar'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.exit_to_app_rounded),
+              onPressed: () async {
+                setState(() {
+                  _isSigningOut = true;
+                });
+                await Authentication.signOut(context: context);
+                setState(() {
+                  _isSigningOut = false;
+                });
+                Navigator.of(context).pushReplacement(_routeToSignInScreen());
+              }),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -174,45 +185,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 _onDaySelected(date);
               },
             ),
-            _isSigningOut
-                ? CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  )
-                : ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        Colors.redAccent,
-                      ),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        _isSigningOut = true;
-                      });
-                      await Authentication.signOut(context: context);
-                      setState(() {
-                        _isSigningOut = false;
-                      });
-                      Navigator.of(context)
-                          .pushReplacement(_routeToSignInScreen());
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: Text(
-                        'Sign Out',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
-                  ),
             Container(
               child: Text(
                 dateDes == null ? "" : dateDes,

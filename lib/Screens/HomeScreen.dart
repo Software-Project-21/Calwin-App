@@ -79,8 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 150.0,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage(
-                        "https://wallpaperaccess.com/full/4075093.jpg"),
+                    image: NetworkImage("https://image.freepik.com/free-vector/colorful-abstract-wallpaper-design_23-2148467625.jpg"),
                     colorFilter: new ColorFilter.mode(
                         Colors.black.withOpacity(0.8), BlendMode.dstATop),
                     fit: BoxFit.cover),
@@ -94,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.only(left: 15, top: 15),
                         child: Text(
                           'Welcome to your team Calendar\n' +
-                              widget._user.email,
+                              widget._user.displayName,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,

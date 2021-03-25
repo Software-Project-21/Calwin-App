@@ -12,14 +12,13 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-
   Artboard _riveArtboard;
-  RiveAnimationController _controller ;
+  RiveAnimationController _controller;
   @override
   void initState() {
     super.initState();
     rootBundle.load('assets/marty_v6.riv').then(
-          (data) async {
+      (data) async {
         final file = RiveFile();
         if (file.import(data)) {
           final artboard = file.mainArtboard;
@@ -29,6 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +40,10 @@ class _SignInScreenState extends State<SignInScreen> {
             height: MediaQuery.of(context).size.height,
             child: _riveArtboard == null
                 ? const SizedBox()
-                : Rive(artboard: _riveArtboard,fit: BoxFit.fitHeight,),
+                : Rive(
+                    artboard: _riveArtboard,
+                    fit: BoxFit.fitHeight,
+                  ),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height*0.4,
@@ -80,7 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
-          ),
+            ),
         ],
       ),
     );

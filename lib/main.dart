@@ -4,7 +4,11 @@ import 'package:provider/provider.dart';
 import 'Screens/sign_in.dart';
 import 'Utils/theme.dart';
 
+
+//
+import 'Screens/holidays.dart';
 void main() {
+  getHolidayDetails();
   runApp(MyApp());
 }
 
@@ -15,18 +19,16 @@ class MyApp extends StatelessWidget {
       create: (_) => ThemeNotifier(),
       child: Consumer<ThemeNotifier>(
           builder: (context, ThemeNotifier notifier, child) {
-            return  MaterialApp(
-              title: 'Calwin App',
-              debugShowCheckedModeBanner: false,
-              theme: notifier.isDarkTheme ? dark : light,
-              home: SignInScreen(),
-            );
-          }),
+        return MaterialApp(
+          title: 'Calwin App',
+          debugShowCheckedModeBanner: false,
+          theme: notifier.isDarkTheme ? dark : light,
+          home: SignInScreen(),
+        );
+      }),
     );
   }
 }
-
-
 
 /*
 https://blog.codemagic.io/firebase-authentication-google-sign-in-using-flutter/ -- For SignIn Feature.

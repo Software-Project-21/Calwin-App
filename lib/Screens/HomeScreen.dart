@@ -15,12 +15,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../Model/HolidayModel.dart';
 import 'package:http/http.dart' as http;
 
-class Htt extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
+// class Htt extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, User user})
@@ -178,14 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // void _onDaySelected(DateTime day, List events, List holidays) {
-  //   setState(() {
-  //     _selectedDay = day;
-  //     _selectedEvents = events;
-  //     _holidays = holidays;
-  //   });
-  // }
-  void _onDaySelected(DateTime date) {
+  void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
@@ -300,17 +293,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String getHoliday(DateTime curDate) {
-    print(holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)]
-        .single);
-    return holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)]
-        .single;
+    return holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)][0];
   }
 
-  Widget _buildHolidaysMarker(DateTime curDate) {
+  Widget _buildHolidaysMarker(BuildContext context, DateTime curDate) {
     return Icon(
       Icons.circle,
       size: 10,
-      color: Colors.red[800],
+      color: Colors.red[900],
     );
   }
 
@@ -341,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ]),
         child: TableCalendar(
           calendarStyle: CalendarStyle(
-            canEventMarkersOverflow: true,
+            // canEventMarkersOverflow: true,
             markersColor: Colors.white,
             weekdayStyle:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -370,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Text(
                   date.day.toString(),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white,fontSize:15),
                 ),
               );
             },
@@ -391,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children.add(
                   Positioned(
                     bottom: 0,
-                    child: _buildHolidaysMarker(date),
+                    child: _buildHolidaysMarker(context, date),
                   ),
                 );
               }
@@ -399,7 +389,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           onDaySelected: (date, events, holidays) {
-            _onDaySelected(date);
+            _onDaySelected(context,date);
           },
           calendarController: _calendarController,
           startingDayOfWeek: StartingDayOfWeek.monday,

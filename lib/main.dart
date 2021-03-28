@@ -8,7 +8,7 @@ import 'Utils/theme.dart';
 //
 import 'Screens/holidays.dart';
 void main() {
-  getHolidayDetails();
+  // getHolidayDetails();
   runApp(MyApp());
 }
 

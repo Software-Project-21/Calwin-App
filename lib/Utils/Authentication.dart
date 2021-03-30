@@ -1,3 +1,4 @@
+import 'package:calwin/Model/CalendarCilent.dart';
 import 'package:calwin/Model/User.dart';
 import 'package:calwin/Screens/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,8 +6,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis_auth/auth.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:googleapis/calendar/v3.dart' as cal;
+import '../main.dart';
+import '../secrets.dart';
 
 class Authentication {
+  static prompt(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   static Future<FirebaseApp> initializeFirebase({
     BuildContext context,
   }) async {
@@ -22,8 +37,14 @@ class Authentication {
           ),
         ),
       );
+    } else {
+      var _clientID = new ClientId(Secret.getId(), "");
+      const _scopes = const [cal.CalendarApi.calendarScope];
+      await clientViaUserConsent(_clientID, _scopes, prompt)
+          .then((AuthClient client) async {
+        CalendarClient.calendar = cal.CalendarApi(client);
+      });
     }
-
     return firebaseApp;
   }
 
@@ -31,23 +52,22 @@ class Authentication {
     FirebaseAuth auth = FirebaseAuth.instance;
     User user;
 
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-
-    final GoogleSignInAccount googleSignInAccount =
-    await googleSignIn.signIn();
-
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'https://www.googleapis.com/auth/calendar']);
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
-
+          await googleSignInAccount.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-
+      //GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      //googleProvider.addScope('https://www.googleapis.com/auth/calendar');
+      //googleProvider.addScope('https://www.googleapis.com/auth/cloud-platform');
       try {
         final UserCredential userCredential =
-        await auth.signInWithCredential(credential);
+            await auth.signInWithCredential(credential);
 
         user = userCredential.user;
       } on FirebaseAuthException catch (e) {
@@ -55,14 +75,13 @@ class Authentication {
           ScaffoldMessenger.of(context).showSnackBar(
             Authentication.customSnackBar(
               content:
-              'The account already exists with a different credential.',
+                  'The account already exists with a different credential.',
             ),
           );
         } else if (e.code == 'invalid-credential') {
           ScaffoldMessenger.of(context).showSnackBar(
             Authentication.customSnackBar(
-              content:
-              'Error occurred while accessing credentials. Try again.',
+              content: 'Error occurred while accessing credentials. Try again.',
             ),
           );
         }
@@ -73,12 +92,11 @@ class Authentication {
           ),
         );
       }
-
       return user;
     }
   }
 
-  static SnackBar customSnackBar({ String content}) {
+  static SnackBar customSnackBar({String content}) {
     return SnackBar(
       backgroundColor: Colors.black,
       content: Text(
@@ -88,7 +106,7 @@ class Authentication {
     );
   }
 
-  static Future<void> signOut({ BuildContext context}) async {
+  static Future<void> signOut({BuildContext context}) async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {

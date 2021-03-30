@@ -1,28 +1,54 @@
-class CalendarItem {
-  static String table = "events";
+import 'package:flutter/material.dart';
 
-  int id;
-  String name;
-  String date;
+class EventInfo {
+  final String id;
+  final String name;
+  final String description;
+  final String location;
+  final String link;
+  final List<dynamic> attendeeEmails;
+  final bool shouldNotifyAttendees;
+  final bool hasConfereningSupport;
+  final int startTimeInEpoch;
+  final int endTimeInEpoch;
 
-  CalendarItem({this.id, this.name, this.date});
+  EventInfo({
+    @required this.id,
+    @required this.name,
+    @required this.description,
+    @required this.location,
+    @required this.link,
+    @required this.attendeeEmails,
+    @required this.shouldNotifyAttendees,
+    @required this.hasConfereningSupport,
+    @required this.startTimeInEpoch,
+    @required this.endTimeInEpoch,
+  });
 
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
+  EventInfo.fromMap(Map snapshot)
+      : id = snapshot['id'] ?? '',
+        name = snapshot['name'] ?? '',
+        description = snapshot['desc'],
+        location = snapshot['loc'],
+        link = snapshot['link'],
+        attendeeEmails = snapshot['emails'] ?? '',
+        shouldNotifyAttendees = snapshot['should_notify'],
+        hasConfereningSupport = snapshot['has_conferencing'],
+        startTimeInEpoch = snapshot['start'],
+        endTimeInEpoch = snapshot['end'];
+
+  toJson() {
+    return {
+      'id': id,
       'name': name,
-      'date': date
+      'desc': description,
+      'loc': location,
+      'link': link,
+      'emails': attendeeEmails,
+      'should_notify': shouldNotifyAttendees,
+      'has_conferencing': hasConfereningSupport,
+      'start': startTimeInEpoch,
+      'end': endTimeInEpoch,
     };
-
-    if (id != null) {
-      map['id'] = id;
-    }
-    return map;
-  }
-
-  static CalendarItem fromMap(Map<String, dynamic> map) {
-    return CalendarItem(
-        id: map['id'],
-        name: map['name'],
-        date: map['date']);
   }
 }

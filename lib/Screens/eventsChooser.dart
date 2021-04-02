@@ -2,23 +2,23 @@
 // import 'package:firebasestarter/core/presentation/res/colors.dart';
 // import 'package:firebasestarter/features/events/data/models/app_event.dart';
 // import 'package:firebasestarter/features/events/data/services/event_firestore_service.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:calwin/Model/DatePicker.dart';
 
 class eventsChooser extends StatefulWidget {
-  //final DateTime selectedDate;
-  // final AppEvent event;
-
-  // const eventsChooser({Key key, this.selectedDate, this.event})
-  //     : super(key: key);
-  // @override
   _eventsChooserState createState() => _eventsChooserState();
 }
 
 class _eventsChooserState extends State<eventsChooser> {
   final _formKey = GlobalKey<FormBuilderState>();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  final TextEditingController _textEditingController = TextEditingController();
+  DateTime _selectedDate;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,19 +73,15 @@ class _eventsChooserState extends State<eventsChooser> {
                       prefixIcon: Icon(Icons.short_text)),
                 ),
                 Divider(),
-                // FormBuilderDatePicker(
-                //   name: "date",
-                //   //initialValue: selectedDate ?? DateTime.now(),
-                //   initialDate: DateTime.now(),
-                //   fieldHintText: "Add Date",
-                //   initialDatePickerMode: DatePickerMode.day,
-                //   inputType: InputType.date,
-                //   format: DateFormat('EEEE, dd MMMM, yyyy'),
-                //   decoration: InputDecoration(
-                //     border: InputBorder.none,
-                //     prefixIcon: Icon(Icons.calendar_today_sharp),
-                //   ),
-                // ),
+                GestureDetector(
+                  onTap: () => _selectDate(),
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: _textEditingController,
+                      decoration: InputDecoration(hintText: 'Pick Date'),
+                    ),
+                  ),
+                ),
                 Divider(),
               ],
             ),
@@ -93,5 +89,60 @@ class _eventsChooserState extends State<eventsChooser> {
         ],
       ),
     );
+  }
+
+  _selectDate() async {
+    DateTime pickedDate = await showModalBottomSheet<DateTime>(
+      context: context,
+      builder: (context) {
+        DateTime tempPickedDate;
+        return Container(
+          height: 250,
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    CupertinoButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    CupertinoButton(
+                      child: Text('Done'),
+                      onPressed: () {
+                        Navigator.of(context).pop(tempPickedDate);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                height: 0,
+                thickness: 1,
+              ),
+              Expanded(
+                child: Container(
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    onDateTimeChanged: (DateTime dateTime) {
+                      tempPickedDate = dateTime;
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+        _textEditingController.text = pickedDate.toString();
+      });
+    }
   }
 }

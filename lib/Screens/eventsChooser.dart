@@ -7,17 +7,17 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddEventPage extends StatefulWidget {
-  final DateTime selectedDate;
+class eventsChooser extends StatefulWidget {
+  //final DateTime selectedDate;
   // final AppEvent event;
 
-  const AddEventPage({Key key, this.selectedDate, this.event})
-      : super(key: key);
-  @override
-  _AddEventPageState createState() => _AddEventPageState();
+  // const eventsChooser({Key key, this.selectedDate, this.event})
+  //     : super(key: key);
+  // @override
+  _eventsChooserState createState() => _eventsChooserState();
 }
 
-class _AddEventPageState extends State<AddEventPage> {
+class _eventsChooserState extends State<eventsChooser> {
   final _formKey = GlobalKey<FormBuilderState>();
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _AddEventPageState extends State<AddEventPage> {
         leading: IconButton(
           icon: Icon(
             Icons.clear,
-            color: AppColors.primaryColor,
+            color: Colors.redAccent[400],
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -39,22 +39,6 @@ class _AddEventPageState extends State<AddEventPage> {
             child: ElevatedButton(
               onPressed: () async {
                 //save
-                _formKey.currentState.save();
-                final data =
-                Map<String, dynamic>.from(_formKey.currentState.value);
-                data["date"] =
-                    (data["date"] as DateTime).millisecondsSinceEpoch;
-                if (widget.event != null) {
-                  //update
-                  await eventDBS.updateData(widget.event.id, data);
-                } else {
-                  //create
-                  await eventDBS.create({
-                    ...data,
-                    "user_id": context.read(userRepoProvider).user.id,
-                  });
-                }
-                Navigator.pop(context);
               },
               child: Text("Save"),
             ),
@@ -71,7 +55,7 @@ class _AddEventPageState extends State<AddEventPage> {
               children: [
                 FormBuilderTextField(
                   name: "title",
-                  initialValue: widget.event?.title,
+                  // initialValue: widget.event?.title,
                   decoration: InputDecoration(
                       hintText: "Add Title",
                       border: InputBorder.none,
@@ -80,7 +64,7 @@ class _AddEventPageState extends State<AddEventPage> {
                 Divider(),
                 FormBuilderTextField(
                   name: "description",
-                  initialValue: widget.event?.description,
+                  // initialValue: widget.event?.description,
                   minLines: 1,
                   maxLines: 5,
                   decoration: InputDecoration(
@@ -89,31 +73,19 @@ class _AddEventPageState extends State<AddEventPage> {
                       prefixIcon: Icon(Icons.short_text)),
                 ),
                 Divider(),
-                FormBuilderSwitch(
-                  name: "public",
-                  initialValue: widget.event?.public ?? false,
-                  title: Text("Public"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                ),
-                Divider(),
-                FormBuilderDateTimePicker(
-                  name: "date",
-                  initialValue: widget.selectedDate ??
-                      widget.event?.date ??
-                      DateTime.now(),
-                  initialDate: DateTime.now(),
-                  fieldHintText: "Add Date",
-                  initialDatePickerMode: DatePickerMode.day,
-                  inputType: InputType.date,
-                  format: DateFormat('EEEE, dd MMMM, yyyy'),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    prefixIcon: Icon(Icons.calendar_today_sharp),
-                  ),
-                ),
+                // FormBuilderDatePicker(
+                //   name: "date",
+                //   //initialValue: selectedDate ?? DateTime.now(),
+                //   initialDate: DateTime.now(),
+                //   fieldHintText: "Add Date",
+                //   initialDatePickerMode: DatePickerMode.day,
+                //   inputType: InputType.date,
+                //   format: DateFormat('EEEE, dd MMMM, yyyy'),
+                //   decoration: InputDecoration(
+                //     border: InputBorder.none,
+                //     prefixIcon: Icon(Icons.calendar_today_sharp),
+                //   ),
+                // ),
                 Divider(),
               ],
             ),

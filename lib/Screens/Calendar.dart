@@ -132,8 +132,9 @@ class _CalendarState extends State<Calendar> {
       body: ListView(
         //crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(15),
+          Card(
+            clipBehavior: Clip.antiAlias,
+            margin: const EdgeInsets.all(15.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

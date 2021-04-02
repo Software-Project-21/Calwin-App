@@ -2,20 +2,21 @@
 // import 'package:firebasestarter/core/presentation/res/colors.dart';
 // import 'package:firebasestarter/features/events/data/models/app_event.dart';
 // import 'package:firebasestarter/features/events/data/services/event_firestore_service.dart';
-import 'package:calwin/Model/CalwinEvent.dart';
-import 'package:calwin/Model/events_db_services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:googleapis/spanner/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:calwin/Model/add_event.dart';
 
 class eventsChooser extends StatefulWidget {
-  final userId;
-  final CalwinEvent event;
+  final User user;
+  //final CalwinEvent event;
 
-  const eventsChooser({Key key, this.event, this.userId}) : super(key: key);
+  const eventsChooser({Key key, this.user}) : super(key: key);
 
   _eventsChooserState createState() => _eventsChooserState();
 }
@@ -49,18 +50,8 @@ class _eventsChooserState extends State<eventsChooser> {
                 final data =
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
-                print(data);
-                if (widget.event != null) {
-                  //update
-                  await eventDBS.updateData(widget.event.id, data);
-                } else {
-                  //create
-                  await eventDBS.create({
-                    ...data,
-                    "userId": widget.userId,
-                  });
-                }
-
+                var curevent = <String, dynamic>{'email': widget.user.email};
+                CalwinDatabase.addEvents(curevent, widget.user.uid);
                 Navigator.pop(context);
               },
               child: Text("Save"),

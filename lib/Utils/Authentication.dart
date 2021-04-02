@@ -14,13 +14,13 @@ import '../main.dart';
 import '../secrets.dart';
 
 class Authentication {
-  static prompt(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  // static prompt(String url) async {
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 
   static Future<FirebaseApp> initializeFirebase({
     BuildContext context,
@@ -32,19 +32,21 @@ class Authentication {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomeScreen(
-            user: user,
-          ),
+          builder: (context) =>
+              HomeScreen(
+                user: user,
+              ),
         ),
       );
-    } else {
-      var _clientID = new ClientId(Secret.getId(), "");
-      const _scopes = const [cal.CalendarApi.calendarScope];
-      await clientViaUserConsent(_clientID, _scopes, prompt)
-          .then((AuthClient client) async {
-        CalendarClient.calendar = cal.CalendarApi(client);
-      });
     }
+    // } else {
+    //   var _clientID = new ClientId(Secret.getId(), "");
+    //   const _scopes = const [cal.CalendarApi.calendarScope];
+    //   await clientViaUserConsent(_clientID, _scopes, prompt)
+    //       .then((AuthClient client) async {
+    //     CalendarClient.calendar = cal.CalendarApi(client);
+    //   });
+    // }
     return firebaseApp;
   }
 

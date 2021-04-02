@@ -2,15 +2,21 @@
 // import 'package:firebasestarter/core/presentation/res/colors.dart';
 // import 'package:firebasestarter/features/events/data/models/app_event.dart';
 // import 'package:firebasestarter/features/events/data/services/event_firestore_service.dart';
+import 'package:calwin/Model/CalwinEvent.dart';
+import 'package:calwin/Model/events_db_services.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:calwin/Model/DatePicker.dart';
 
 class eventsChooser extends StatefulWidget {
+  final userId;
+  final CalwinEvent event;
+
+  const eventsChooser({Key key, this.event, this.userId}) : super(key: key);
+
   _eventsChooserState createState() => _eventsChooserState();
 }
 
@@ -19,7 +25,7 @@ class _eventsChooserState extends State<eventsChooser> {
   final _formKey = GlobalKey<FormBuilderState>();
   TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _textEditingController = TextEditingController();
-  DateTime _selectedDate;
+  DateTime _selectedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +45,23 @@ class _eventsChooserState extends State<eventsChooser> {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () async {
-                //save
+                _formKey.currentState.save();
+                final data =
+                    Map<String, dynamic>.from(_formKey.currentState.value);
+                data["date"] = _selectedDate;
+                print(data);
+                if (widget.event != null) {
+                  //update
+                  await eventDBS.updateData(widget.event.id, data);
+                } else {
+                  //create
+                  await eventDBS.create({
+                    ...data,
+                    "userId": widget.userId,
+                  });
+                }
+
+                Navigator.pop(context);
               },
               child: Text("Save"),
             ),
@@ -79,12 +101,14 @@ class _eventsChooserState extends State<eventsChooser> {
                   child: AbsorbPointer(
                     child: TextField(
                       controller: _textEditingController,
-                      decoration: InputDecoration(hintText: 'Pick Date'),
+                      decoration: InputDecoration(
+                          hintText: 'Pick Date',
+                          prefixIcon: Icon(CupertinoIcons.calendar_badge_plus)),
                     ),
                   ),
                 ),
                 Divider(),
-                EmailInput(hint: 'Add People',parentEmails: _emails),
+                EmailInput(hint: 'Add People', parentEmails: _emails),
                 Divider(),
               ],
             ),
@@ -129,7 +153,7 @@ class _eventsChooserState extends State<eventsChooser> {
               Expanded(
                 child: Container(
                   child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
+                    mode: CupertinoDatePickerMode.dateAndTime,
                     onDateTimeChanged: (DateTime dateTime) {
                       tempPickedDate = dateTime;
                     },
@@ -155,7 +179,8 @@ class EmailInput extends StatefulWidget {
   final String hint;
   final List<String> parentEmails;
 
-  const EmailInput({Key key, this.setList, this.hint, this.parentEmails}) : super(key: key);
+  const EmailInput({Key key, this.setList, this.hint, this.parentEmails})
+      : super(key: key);
 
   @override
   _EmailInputState createState() => _EmailInputState();
@@ -182,20 +207,20 @@ class _EmailInputState extends State<EmailInput> {
   Widget build(BuildContext context) {
     return Container(
         child: Column(
-          children: <Widget>[
-            Container(
-              // padding: EdgeInsets.only(left: 100),
-              alignment: Alignment.centerLeft,
-              constraints: BoxConstraints(
-                minWidth: 0,
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  children: <Widget>[
-                    ...emails
-                        .map(
-                          (email) => Chip(
+      children: <Widget>[
+        Container(
+          // padding: EdgeInsets.only(left: 100),
+          alignment: Alignment.centerLeft,
+          constraints: BoxConstraints(
+            minWidth: 0,
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              children: <Widget>[
+                ...emails
+                    .map(
+                      (email) => Chip(
                         avatar: CircleAvatar(
                           backgroundColor: Colors.black,
                           child: Text(
@@ -215,38 +240,41 @@ class _EmailInputState extends State<EmailInput> {
                           })
                         },
                       ),
-                    ).toList(),
-                  ],
-                ),
-              ),
+                    )
+                    .toList(),
+              ],
             ),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration.collapsed(hintText: widget.hint),
-              controller: _emailController,
-              focusNode: focus,
-              onChanged: (String val) {
-                setState(() {
-                  if (val != lastValue) {
-                    lastValue = val;
-                    if (val.endsWith(' ') && validateEmail(val.trim())) {
-                      if (!emails.contains(val.trim())) {
-                        emails.add(val.trim());
-                        widget.setList(emails);
-                      }
-                      _emailController.clear();
-                    } else if (val.endsWith(' ') && !validateEmail(val.trim())) {
-                      _emailController.clear();
-                    }
+          ),
+        ),
+        TextField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+              hintText: widget.hint,
+              prefixIcon: Icon(CupertinoIcons.person_3_fill)),
+          controller: _emailController,
+          focusNode: focus,
+          onChanged: (String val) {
+            setState(() {
+              if (val != lastValue) {
+                lastValue = val;
+                if (val.endsWith(' ') && validateEmail(val.trim())) {
+                  if (!emails.contains(val.trim())) {
+                    emails.add(val.trim());
+                    widget.setList(emails);
                   }
-                });
-              },
-              onEditingComplete: () {
-                updateEmails();
-              },
-            )
-          ],
-        ));
+                  _emailController.clear();
+                } else if (val.endsWith(' ') && !validateEmail(val.trim())) {
+                  _emailController.clear();
+                }
+              }
+            });
+          },
+          onEditingComplete: () {
+            updateEmails();
+          },
+        )
+      ],
+    ));
   }
 
   updateEmails() {
@@ -274,5 +302,3 @@ bool validateEmail(String value) {
   RegExp regex = new RegExp(pattern);
   return regex.hasMatch(value);
 }
-
-

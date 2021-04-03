@@ -1,73 +1,58 @@
 import 'dart:convert';
+import 'package:calwin/Model/CalwinEvent.dart';
+import 'package:flutter/material.dart';
 
-class CalwinEvent {
-  final String title;
-  final String id;
-  final String description;
-  final DateTime date;
+class CalwinUser {
   final String userId;
+  final String name;
+  final List<CalwinEvent> events;
+
   // TODO: Add List of Attendees
-  CalwinEvent({
-    this.title,
-    this.id,
-    this.description,
-    this.date,
+  CalwinUser({
+    this.events,
     this.userId,
+    this.name
   });
 
-  CalwinEvent copyWith({
-    String title,
-    String id,
-    String description,
-    DateTime date,
-    String userId,
+  CalwinUser copyWith({
+    String name,
+    List<CalwinEvent> events,
   }) {
-    return CalwinEvent(
-      title: title ?? this.title,
-      id: id ?? this.id,
-      description: description ?? this.description,
-      date: date ?? this.date,
+    return CalwinUser(
+      events: events ?? this.events,
+      name: name ?? this.name,
       userId: userId ?? this.userId,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'title': title,
-      'id': id,
-      'description': description,
-      'date': date.millisecondsSinceEpoch,
-      'userId': userId,
+      'events': events,
+      'name' : name,
     };
   }
 
-  factory CalwinEvent.fromMap(Map<String, dynamic> map) {
+  factory CalwinUser.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
 
-    return CalwinEvent(
-      title: map['title'],
-      id: map['id'],
-      description: map['description'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      userId: map['userId'],
+    return CalwinUser(
+      events: map['events'],
+      name: map['name'],
     );
   }
-  factory CalwinEvent.fromDS(String id, Map<String, dynamic> data) {
+  factory CalwinUser.fromDS(String id, Map<String, dynamic> data) {
     if (data == null) return null;
 
-    return CalwinEvent(
-      title: data['title'],
-      id: id,
-      description: data['description'],
-      date: DateTime.fromMillisecondsSinceEpoch(data['date']),
-      userId: data['user_id'],
+    return CalwinUser(
+      events: data['events'],
+      name: data['name'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory CalwinEvent.fromJson(String source) =>
-      CalwinEvent.fromMap(json.decode(source));
+  factory CalwinUser.fromJson(String source) =>
+      CalwinUser.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -78,7 +63,7 @@ class CalwinEvent {
   bool operator ==(Object o) {
     if (identical(this, o)) return true;
 
-    return o is CalwinEvent &&
+    return o is CalwinUser &&
         o.title == title &&
         o.id == id &&
         o.description == description &&

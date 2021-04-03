@@ -1,4 +1,3 @@
-import 'package:calwin/Model/CalendarCilent.dart';
 import 'package:calwin/Model/User.dart';
 import 'package:calwin/Screens/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,10 +31,9 @@ class Authentication {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) =>
-              HomeScreen(
-                user: user,
-              ),
+          builder: (context) => HomeScreen(
+            user: user,
+          ),
         ),
       );
     }

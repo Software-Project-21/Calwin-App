@@ -3,7 +3,6 @@ import 'package:calwin/Screens/sign_in.dart';
 import 'package:calwin/Screens/eventsChooser.dart';
 import 'package:calwin/Utils/Authentication.dart';
 import 'package:flutter/material.dart';
-import 'package:calwin/Model/calender_model.dart';
 import 'package:calwin/Utils/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -138,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => eventsChooser(userId: _user.uid),
+              builder: (context) => eventsChooser(user: widget._user),
             ),
           );
         },

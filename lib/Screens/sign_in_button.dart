@@ -1,4 +1,4 @@
-import 'package:calwin/Model/CalendarCilent.dart';
+import 'package:calwin/Model/Database.dart';
 import 'package:calwin/Model/User.dart';
 import 'package:calwin/Utils/Authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,6 +49,14 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   _isSigningIn = false;
                 });
                 if (user != null) {
+                  var curuser = <String, dynamic>{
+                    'email': user.email,
+                    'photoURL': user.photoURL,
+                    'name': user.displayName,
+                    // 'event': ''
+                  };
+                  // data['events'] = [];
+                  CalwinDatabase.addUser(curuser, user.uid);
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(

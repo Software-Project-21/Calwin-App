@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:calwin/Model/Database.dart';
 
-class eventsChooser extends StatefulWidget {
+List<String> emails = [];
 
+class eventsChooser extends StatefulWidget {
   final User user;
   //final CalwinEvent event;
 
@@ -18,8 +19,17 @@ class _eventsChooserState extends State<eventsChooser> {
   List<String> _emails;
   final _formKey = GlobalKey<FormBuilderState>();
   TimeOfDay selectedTime = TimeOfDay.now();
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController1 = TextEditingController();
+  final TextEditingController _textEditingController2 = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  DateTime _startDateTime, _finishDateTime;
+  @override
+  void initState() {
+    // TODO: implement initState
+    emails.clear();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +56,11 @@ class _eventsChooserState extends State<eventsChooser> {
                 var curevent = <String, dynamic>{
                   'title': data['title'],
                   'description': data['description'],
+                  'startTime': _startDateTime,
+                  'endTime': _finishDateTime,
+                  'attendeeEmail': emails
                 };
+                print(emails);
                 CalwinDatabase.addEvents(curevent, widget.user.uid);
                 Navigator.pop(context);
               },
@@ -84,12 +98,24 @@ class _eventsChooserState extends State<eventsChooser> {
                 ),
                 Divider(),
                 GestureDetector(
-                  onTap: () => _selectDate(),
+                  onTap: () => _selectDate(0),
                   child: AbsorbPointer(
                     child: TextField(
-                      controller: _textEditingController,
+                      controller: _textEditingController1,
                       decoration: InputDecoration(
-                          hintText: 'Pick Date',
+                          hintText: 'Event Start Date & Time',
+                          prefixIcon: Icon(CupertinoIcons.calendar_badge_plus)),
+                    ),
+                  ),
+                ),
+                Divider(),
+                GestureDetector(
+                  onTap: () => _selectDate(1),
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: _textEditingController2,
+                      decoration: InputDecoration(
+                          hintText: 'Event Finish Date & Time',
                           prefixIcon: Icon(CupertinoIcons.calendar_badge_plus)),
                     ),
                   ),
@@ -105,7 +131,7 @@ class _eventsChooserState extends State<eventsChooser> {
     );
   }
 
-  _selectDate() async {
+  _selectDate(int a) async {
     DateTime pickedDate = await showModalBottomSheet<DateTime>(
       context: context,
       builder: (context) {
@@ -154,8 +180,14 @@ class _eventsChooserState extends State<eventsChooser> {
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
+        if (a == 0) {
+          _startDateTime = pickedDate;
+          _textEditingController1.text = pickedDate.toString();
+        } else {
+          _finishDateTime = pickedDate;
+          _textEditingController2.text = pickedDate.toString();
+        }
         _selectedDate = pickedDate;
-        _textEditingController.text = pickedDate.toString();
       });
     }
   }
@@ -176,7 +208,6 @@ class EmailInput extends StatefulWidget {
 class _EmailInputState extends State<EmailInput> {
   TextEditingController _emailController;
   String lastValue = '';
-  List<String> emails = [];
   FocusNode focus = FocusNode();
   @override
   void initState() {
@@ -278,8 +309,8 @@ class _EmailInputState extends State<EmailInput> {
     });
   }
 
-  setEmails(List<String> emails) {
-    this.emails = emails;
+  setEmails(List<String> email) {
+    emails = email;
   }
 }
 

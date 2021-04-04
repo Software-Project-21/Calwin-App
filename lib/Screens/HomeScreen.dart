@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     futureHoliday = getHolidayDetails();
     _user = widget._user;
-    _events = {};
+    _events = CalwinDatabase.getAllEvents(_user.uid);
     _selectedEvents = [];
     _calendarController = CalendarController();
   }
@@ -152,7 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
-      CalwinDatabase.getEvents(_user.uid);
+      // print(CalwinDatabase.getAllEvents(_user.uid));
+      _events = CalwinDatabase.getAllEvents(_user.uid);
+      _selectedEvents = _events[date];
+      print(_events);
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
         dateDes = getHoliday(date);
@@ -164,6 +167,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String getHoliday(DateTime curDate) {
     return holidays_list[new DateTime(curDate.year, curDate.month, curDate.day)]
         [0];
+  }
+
+  Widget _buildEventMarker(BuildContext context, DateTime curDate) {
+    return Icon(
+      Icons.circle,
+      size: 10,
+      color: Colors.white,
+    );
   }
 
   Widget _buildHolidaysMarker(BuildContext context, DateTime curDate) {
@@ -237,6 +248,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 )),
             markersBuilder: (context, date, events, holidays) {
               final children = <Widget>[];
+              if(events.isNotEmpty){
+                // print(events);
+                children.add(
+                  Positioned(
+                    top: 0,
+                    child: _buildEventMarker(context, date),
+                  ),
+                );
+              }
               if (holidays.isNotEmpty) {
                 children.add(
                   Positioned(

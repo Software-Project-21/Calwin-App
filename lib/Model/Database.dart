@@ -43,15 +43,24 @@ class CalwinDatabase {
       }
     });
   }
-  static Map<DateTime,List<dynamic>> getAllEvents(String userID)
+  static Map<DateTime,List> getAllEvents(String userID)
   {
     getEvents(userID);
-    Map<DateTime,List<dynamic>> allEvents={};
+    Map<DateTime,List> allEvents={};
+    if(events==null){
+      return null;
+    }
     for (int i = 0; i < events.length; i++) {
       var cc = events[i];
       DateTime eventDate = cc['startTime'].toDate();
-      allEvents[eventDate].add(events[i]);
+      if(allEvents[eventDate]==null){
+        allEvents[eventDate]= [];
+        allEvents[eventDate].add(events[i]);
+      }else {
+        allEvents[eventDate].add(events[i]);
+      }
     }
+    return allEvents;
   }
   static List<dynamic> getEventOnSelectedDay(String userID, DateTime curDay) {
     getEvents(userID);

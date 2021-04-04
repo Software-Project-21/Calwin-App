@@ -150,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _onDaySelected(BuildContext context, DateTime date) {
+  void _onDaySelected(BuildContext context, DateTime date){
     setState(() {
-      CalwinDatabase.getEvents(_user.uid, date);
+      CalwinDatabase.getEventOnSelectedDay(_user.uid, date);
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
         dateDes = getHoliday(date);

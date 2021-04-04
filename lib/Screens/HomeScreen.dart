@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
-      CalwinDatabase.getEvents(_user.uid, date);
+      CalwinDatabase.getEvents(_user.uid);
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
         dateDes = getHoliday(date);
@@ -250,9 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onDaySelected: (date, events, holidays) {
             _onDaySelected(context, date);
-            setState(() {
-              _selectedEvents = events;
-            });
+            // setState(() {
+            //   _selectedEvents = events;
+            // });
           },
           calendarController: _calendarController,
           startingDayOfWeek: StartingDayOfWeek.monday,

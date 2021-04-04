@@ -33,12 +33,10 @@ class CalwinDatabase {
     });
   }
 
-  static Future<Map<DateTime, List<dynamic> >> getEvents(
+  static Future<Map<DateTime, List<dynamic>>> getEvents(
       String user_id, DateTime date) async {
     await _db.collection('users').doc(user_id).get().then((value) {
-      List<dynamic> curDate;
-      value.data()['events'].forEach((events) curDate.add(events));
-      return curDate;
+      return value.data()['events'];
     });
     /*
     await _db.collection('users').doc(user_id).get().then((value) {

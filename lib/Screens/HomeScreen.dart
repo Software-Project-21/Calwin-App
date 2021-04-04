@@ -12,14 +12,7 @@ import 'package:intl/intl.dart';
 import 'holidays.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Model/HolidayModel.dart';
-import 'package:http/http.dart' as http;
-
-// class Htt extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
+import '../Model/Database.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key, User user})
@@ -68,6 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     futureHoliday = getHolidayDetails();
     _user = widget._user;
+    _events = {};
+    _selectedEvents = [];
     _calendarController = CalendarController();
   }
 
@@ -157,6 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
+      CalwinDatabase.getEvents(_user.uid, date);
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
         dateDes = getHoliday(date);
@@ -254,6 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onDaySelected: (date, events, holidays) {
             _onDaySelected(context, date);
+            setState(() {
+              _selectedEvents = events;
+            });
           },
           calendarController: _calendarController,
           startingDayOfWeek: StartingDayOfWeek.monday,

@@ -54,6 +54,7 @@ class CalwinDatabase {
     }
     for (int i = 0; i < events.length; i++) {
       var cc = events[i];
+      if (cc['startTime'] == null) continue;
       DateTime eventDate = cc['startTime'].toDate();
       DateTime onlyDate =
           DateTime(eventDate.year, eventDate.month, eventDate.day);
@@ -85,5 +86,26 @@ class CalwinDatabase {
       }
       return curDayEvents;
     }
+  }
+
+  static Future<void> deleteEvent(String eventID, String userID) async {
+    List<dynamic> updEvents = [];
+    for (int i = 0; i < events.length; i++) {
+      var cc = events[i];
+      if (cc['id'] == eventID)
+        continue;
+      else
+        updEvents.add(events[i]);
+    }
+    await _db.collection('users').doc(userID).update({'events': updEvents});
+  }
+
+  static Future<void> modifyEvent(
+      String eventID, String userID, List<dynamic> updatedEvent) async {
+    for (int i = 0; i < events.length; i++) {
+      var cc = events[i];
+      if (cc['id'] == eventID) events[i] = updatedEvent;
+    }
+    await _db.collection('users').doc(userID).update({'events': events});
   }
 }

@@ -85,12 +85,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, notifier, child) => IconButton(
                           icon: notifier.isDarkTheme
                               ? FaIcon(
-                            Icons.refresh,
-                            size: 25,
-                            color: Colors.white,
-                          )
-                              : Icon(Icons.refresh,size: 25),
-                          onPressed: (){
+                                  Icons.refresh,
+                                  size: 25,
+                                  color: Colors.white,
+                                )
+                              : Icon(Icons.refresh, size: 25),
+                          onPressed: () {
                             _events = CalwinDatabase.getAllEvents(_user.uid);
                           })),
                   Consumer<ThemeNotifier>(
@@ -138,9 +138,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Center(
             child: Container(
-              child:  (_selectedEvents == null) ? Container(height: 0,width: 0,):  _buildEventList(),
-              ),
+              child: (_selectedEvents == null)
+                  ? Container(
+                      height: 0,
+                      width: 0,
+                    )
+                  : _buildEventList(),
             ),
+          ),
           //Column(children: _eventWidgets),
         ],
       ),
@@ -170,15 +175,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
       // print(CalwinDatabase.getAllEvents(_user.uid));
-      DateTime selectedDate = DateTime(date.year,date.month,date.day);
-      if(_events==null){
+      CalwinDatabase.deleteEvent(
+          '6ba7b811-9dad-11d1-80b4-00c04fd430c8', _user.uid);
+      DateTime selectedDate = DateTime(date.year, date.month, date.day);
+      if (_events == null) {
         _events = CalwinDatabase.getAllEvents(_user.uid);
         _selectedEvents = _events[selectedDate];
-      }else{
+      } else {
         _selectedEvents = _events[selectedDate];
       }
-      // print(selectedDate);
-      // print(_selectedEvents.length);
 
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
@@ -201,8 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
         color: _calendarController.isSelected(date)
             ? Colors.white
             : _calendarController.isToday(date)
-            ? Colors.yellow
-            : Colors.orange,
+                ? Colors.yellow
+                : Colors.orange,
       ),
       width: 16.0,
       height: 16.0,
@@ -213,15 +218,14 @@ class _HomeScreenState extends State<HomeScreen> {
             color: _calendarController.isSelected(date)
                 ? Colors.black
                 : _calendarController.isToday(date)
-                ? Colors.black
-                : Colors.white,
+                    ? Colors.black
+                    : Colors.white,
             fontSize: 12.0,
           ),
         ),
       ),
     );
   }
-
 
   Widget _buildHolidaysMarker(BuildContext context, DateTime curDate) {
     return Icon(
@@ -236,16 +240,16 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(6),
-            gradient:
-                LinearGradient(colors: [Colors.deepPurple, Colors.red[400]]),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: new Offset(0.0, 5))
-            ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(6),
+          gradient:
+              LinearGradient(colors: [Colors.deepPurple, Colors.red[400]]),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5,
+                offset: new Offset(0.0, 5))
+          ],
         ),
         child: TableCalendar(
           calendarStyle: CalendarStyle(
@@ -255,7 +259,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             holidayStyle: TextStyle()
                 .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-            eventDayStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), // fix.
+            eventDayStyle: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold), // fix.
             // todayColor: Colors.black12,
             // todayStyle: TextStyle(
             //     color: Colors.white,
@@ -297,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 )),
             markersBuilder: (context, date, events, holidays) {
               final children = <Widget>[];
-              if(events.isNotEmpty){
+              if (events.isNotEmpty) {
                 // print(events);
                 children.add(
                   Positioned(
@@ -325,7 +330,6 @@ class _HomeScreenState extends State<HomeScreen> {
           startingDayOfWeek: StartingDayOfWeek.monday,
           events: _events,
           headerStyle: HeaderStyle(
-
             leftChevronIcon:
                 Icon(Icons.arrow_back_ios, size: 15, color: Colors.white),
             rightChevronIcon:
@@ -347,30 +351,35 @@ class _HomeScreenState extends State<HomeScreen> {
       constraints: BoxConstraints(maxHeight: 400, minHeight: 56.0),
       child: ListView(
         children: _selectedEvents
-            .map((event) =>
-            Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-                gradient:
-                LinearGradient(colors: [Colors.deepPurple, Colors.red[700]]),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      offset: new Offset(0.0, 5))
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(event['title'],style: TextStyle(fontSize: 30,color: Colors.white),),
-                  Text(event['description'],style: TextStyle(fontSize: 20,color: Colors.white),),
-                ],
-              ),
-            )
-        ).toList(),
+            .map((event) => Container(
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    gradient: LinearGradient(
+                        colors: [Colors.deepPurple, Colors.red[700]]),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 5,
+                          offset: new Offset(0.0, 5))
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        event['title'],
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                      Text(
+                        event['description'],
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
       ),
     );
   }

@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //  _selectedEvents.map((e) => events(e)).toList();
   String dateDes;
 
+  @override
   void initState() {
     super.initState();
     futureHoliday = getHolidayDetails();
@@ -137,14 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Center(
             child: Container(
-              child: Text(
-                _selectedEvents == null ? "" : _selectedEvents.toString(),
-                style: TextStyle(color: Colors.red, fontSize: 18.0),
+              child:  (_selectedEvents == null) ? Container(height: 0,width: 0,):  _buildEventList(),
               ),
             ),
-          ),
           //Column(children: _eventWidgets),
-          // _selectedEvents == null ? ListView() : _buildEventList(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -242,13 +239,14 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(6),
             gradient:
-                LinearGradient(colors: [Colors.blue[600], Colors.blue[400]]),
+                LinearGradient(colors: [Colors.deepPurple, Colors.red[400]]),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.black12,
                   blurRadius: 5,
                   offset: new Offset(0.0, 5))
-            ]),
+            ],
+        ),
         child: TableCalendar(
           calendarStyle: CalendarStyle(
             // canEventMarkersOverflow: true,
@@ -345,21 +343,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents[0]
-          .map((event) => Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.8),
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        margin:
-        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: ListTile(
-          title: Text("help"),
-          onTap: () => print('$event tapped!'),
-        ),
-      ))
-          .toList(),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: 400, minHeight: 56.0),
+      child: ListView(
+        children: _selectedEvents
+            .map((event) =>
+            Container(
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                gradient:
+                LinearGradient(colors: [Colors.deepPurple, Colors.red[700]]),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 5,
+                      offset: new Offset(0.0, 5))
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(event['title'],style: TextStyle(fontSize: 30,color: Colors.white),),
+                  Text(event['description'],style: TextStyle(fontSize: 20,color: Colors.white),),
+                ],
+              ),
+            )
+        ).toList(),
+      ),
     );
   }
 }

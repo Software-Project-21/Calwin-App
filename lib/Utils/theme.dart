@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Color kLight = Color(0xffe8e8e8);
+Color kRed = Color(0xfff05454);
+Color kGrey = Color(0xff30475e);
+Color kDark = Color(0xff222831);
 ThemeData light = ThemeData(
-  primaryColor: Color.fromRGBO(246, 248, 250, 1.0),
-  accentColor: Color.fromRGBO(50, 50, 50, 1),
+  primaryColor: kLight,
+  accentColor: Color.fromRGBO(50, 50, 50, 1.0),
   primaryTextTheme: TextTheme(
     // Section Headings
     headline1: GoogleFonts.montserrat(
@@ -19,7 +23,7 @@ ThemeData light = ThemeData(
 );
 
 ThemeData dark = ThemeData(
-    primaryColor: Color.fromRGBO(31, 31, 31, 1.0),
+    primaryColor: kDark,
     accentColor: Color.fromRGBO(200, 200, 200, 1),
     dividerColor: Color.fromRGBO(200, 200, 200, 0.1),
     primaryTextTheme: TextTheme(

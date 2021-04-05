@@ -136,16 +136,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Center(
-            child: Container(
-              child:  (_selectedEvents == null) ? Container(height: 0,width: 0,):  _buildEventList(),
-              ),
+          Text((_selectedEvents == null)? "  No Events":"  Events",style: Theme.of(context).primaryTextTheme.headline1),
+          Container(
+            child:  (_selectedEvents == null) ? Container():  _buildEventList(),
             ),
           //Column(children: _eventWidgets),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.redAccent,
+        backgroundColor: kRed,
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -236,10 +235,10 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: kRed,
             borderRadius: BorderRadius.circular(6),
-            gradient:
-                LinearGradient(colors: [Colors.deepPurple, Colors.red[400]]),
+            // gradient:
+            //     LinearGradient(colors: [Colors.red[600], Colors.red[400]]),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.black12,
@@ -346,32 +345,60 @@ class _HomeScreenState extends State<HomeScreen> {
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: 400, minHeight: 56.0),
       child: ListView(
-        children: _selectedEvents
-            .map((event) =>
-            Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-                gradient:
-                LinearGradient(colors: [Colors.deepPurple, Colors.red[700]]),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      offset: new Offset(0.0, 5))
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(event['title'],style: TextStyle(fontSize: 30,color: Colors.white),),
-                  Text(event['description'],style: TextStyle(fontSize: 20,color: Colors.white),),
-                ],
-              ),
-            )
-        ).toList(),
-      ),
+      children: _selectedEvents
+          .map((event) =>
+          Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: kRed,
+              borderRadius: BorderRadius.circular(6),
+              // gradient:
+              // LinearGradient(colors: [Colors.red[500],Colors.red[400],Colors.red[400],Colors.deepPurple]),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 5,
+                    offset: new Offset(0.0, 5))
+              ],
+            ),
+            child: singleTile(event),
+          )
+      ).toList(),
+        ),
     );
   }
+  Widget singleTile(Map<String,dynamic> event){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 20,top: 15,bottom: 15),
+          child: Column(
+            children: [
+              Text(event['title'],style: Theme.of(context).primaryTextTheme.bodyText1),
+              Text(event['description'],style: Theme.of(context).primaryTextTheme.bodyText1),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            IconButton(
+            icon: Icon(FontAwesomeIcons.edit),
+            onPressed: (){
+              // TODO:
+            }
+          ),
+            IconButton(
+                icon: Icon(Icons.delete_rounded),
+                onPressed: (){
+                  // TODO:
+                }
+            ),
+          ]
+        ),
+      ],
+    );
+  }
+
 }

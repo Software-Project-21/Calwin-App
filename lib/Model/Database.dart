@@ -5,8 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 List<dynamic> events;
+var uuid = Uuid();
 
 class CalwinDatabase {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -23,6 +25,7 @@ class CalwinDatabase {
     await _db.collection('users').doc(user_id).update({
       'events': FieldValue.arrayUnion([
         {
+          'id': uuid.v4(),
           'title': event['title'],
           'description': event['description'],
           'startTime': event['startTime'],
@@ -43,27 +46,30 @@ class CalwinDatabase {
       }
     });
   }
-  static Map<DateTime,List> getAllEvents(String userID)
-  {
+
+  static Map<DateTime, List> getAllEvents(String userID) {
     getEvents(userID);
-    Map<DateTime,List> allEvents={};
-    if(events==null){
+    Map<DateTime, List> allEvents = {};
+    if (events == null) {
       return null;
     }
     for (int i = 0; i < events.length; i++) {
       var cc = events[i];
+      if (cc['startTime'] == null) continue;
       DateTime eventDate = cc['startTime'].toDate();
-      DateTime onlyDate = DateTime( eventDate.year,eventDate.month,eventDate.day);
+      DateTime onlyDate =
+          DateTime(eventDate.year, eventDate.month, eventDate.day);
 
-      if(allEvents[onlyDate]==null){
-        allEvents[onlyDate]= [];
+      if (allEvents[onlyDate] == null) {
+        allEvents[onlyDate] = [];
         allEvents[onlyDate].add(events[i]);
-      }else {
+      } else {
         allEvents[onlyDate].add(events[i]);
       }
     }
     return allEvents;
   }
+
   static List<dynamic> getEventOnSelectedDay(String userID, DateTime curDay) {
     getEvents(userID);
     List<dynamic> curDayEvents = [];
@@ -81,5 +87,28 @@ class CalwinDatabase {
       }
       return curDayEvents;
     }
+  }
+
+  static Future<void> deleteEvent(String eventID, String userID) async {
+    List<dynamic> updEvents = [];
+    for (int i = 0; i < events.length; i++) {
+      var cc = events[i];
+      if (cc['id'] == eventID)
+        continue;
+      else
+        updEvents.add(events[i]);
+    }
+    await _db.collection('users').doc(userID).update({'events': updEvents});
+  }
+
+  static Future<void> modifyEvent(String eventID, String userID, List<dynamic> updatedEvent) async {
+    for (int i = 0; i < events.length; i++) {
+      var cc = events[i];
+      if (cc['id'] == eventID){
+        events[i] = updatedEvent;
+        break;
+      }
+    }
+    await _db.collection('users').doc(userID).update({'events': events});
   }
 }

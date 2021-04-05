@@ -53,11 +53,13 @@ class CalwinDatabase {
     for (int i = 0; i < events.length; i++) {
       var cc = events[i];
       DateTime eventDate = cc['startTime'].toDate();
-      if(allEvents[eventDate]==null){
-        allEvents[eventDate]= [];
-        allEvents[eventDate].add(events[i]);
+      DateTime onlyDate = DateTime( eventDate.year,eventDate.month,eventDate.day);
+
+      if(allEvents[onlyDate]==null){
+        allEvents[onlyDate]= [];
+        allEvents[onlyDate].add(events[i]);
       }else {
-        allEvents[eventDate].add(events[i]);
+        allEvents[onlyDate].add(events[i]);
       }
     }
     return allEvents;

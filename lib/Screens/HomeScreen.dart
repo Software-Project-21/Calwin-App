@@ -84,6 +84,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, notifier, child) => IconButton(
                           icon: notifier.isDarkTheme
                               ? FaIcon(
+                            Icons.refresh,
+                            size: 25,
+                            color: Colors.white,
+                          )
+                              : Icon(Icons.refresh,size: 25),
+                          onPressed: (){
+                            _events = CalwinDatabase.getAllEvents(_user.uid);
+                          })),
+                  Consumer<ThemeNotifier>(
+                      builder: (context, notifier, child) => IconButton(
+                          icon: notifier.isDarkTheme
+                              ? FaIcon(
                                   FontAwesomeIcons.moon,
                                   size: 20,
                                   color: Colors.white,
@@ -123,8 +135,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          Center(
+            child: Container(
+              child: Text(
+                _selectedEvents == null ? "" : _selectedEvents.toString(),
+                style: TextStyle(color: Colors.red, fontSize: 18.0),
+              ),
+            ),
+          ),
           //Column(children: _eventWidgets),
-          SizedBox(height: 60)
+          // _selectedEvents == null ? ListView() : _buildEventList(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -153,9 +173,16 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onDaySelected(BuildContext context, DateTime date) {
     setState(() {
       // print(CalwinDatabase.getAllEvents(_user.uid));
-      _events = CalwinDatabase.getAllEvents(_user.uid);
-      _selectedEvents = _events[date];
-      print(_events);
+      DateTime selectedDate = DateTime(date.year,date.month,date.day);
+      if(_events==null){
+        _events = CalwinDatabase.getAllEvents(_user.uid);
+        _selectedEvents = _events[selectedDate];
+      }else{
+        _selectedEvents = _events[selectedDate];
+      }
+      // print(selectedDate);
+      // print(_selectedEvents.length);
+
       if (holidays_list
           .containsKey(new DateTime(date.year, date.month, date.day)))
         dateDes = getHoliday(date);
@@ -169,13 +196,35 @@ class _HomeScreenState extends State<HomeScreen> {
         [0];
   }
 
-  Widget _buildEventMarker(BuildContext context, DateTime curDate) {
-    return Icon(
-      Icons.circle,
-      size: 10,
-      color: Colors.white,
+  Widget _buildEventMarker(DateTime date, List events) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _calendarController.isSelected(date)
+            ? Colors.white
+            : _calendarController.isToday(date)
+            ? Colors.yellow
+            : Colors.orange,
+      ),
+      width: 16.0,
+      height: 16.0,
+      child: Center(
+        child: Text(
+          '${events.length}',
+          style: TextStyle().copyWith(
+            color: _calendarController.isSelected(date)
+                ? Colors.black
+                : _calendarController.isToday(date)
+                ? Colors.black
+                : Colors.white,
+            fontSize: 12.0,
+          ),
+        ),
+      ),
     );
   }
+
 
   Widget _buildHolidaysMarker(BuildContext context, DateTime curDate) {
     return Icon(
@@ -193,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(6),
             gradient:
-                LinearGradient(colors: [Colors.red[600], Colors.red[400]]),
+                LinearGradient(colors: [Colors.blue[600], Colors.blue[400]]),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.black12,
@@ -203,21 +252,23 @@ class _HomeScreenState extends State<HomeScreen> {
         child: TableCalendar(
           calendarStyle: CalendarStyle(
             // canEventMarkersOverflow: true,
-            markersColor: Colors.white,
+            // markersColor: Colors.white,
             weekdayStyle:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             holidayStyle: TextStyle()
                 .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-            todayColor: Colors.white54,
-            todayStyle: TextStyle(
-                color: Colors.redAccent,
-                fontSize: 15,
-                fontWeight: FontWeight.bold),
+            eventDayStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), // fix.
+            // todayColor: Colors.black12,
+            // todayStyle: TextStyle(
+            //     color: Colors.white,
+            //     fontSize: 1,
+            //     fontWeight: FontWeight.bold),
             outsideWeekendStyle: TextStyle(color: Colors.white60),
             outsideStyle: TextStyle(color: Colors.white60),
             weekendStyle:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            renderDaysOfWeek: false,
+            renderDaysOfWeek: true,
+            outsideDaysVisible: true,
           ),
           holidays: holidays_list,
           builders: CalendarBuilders(
@@ -239,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.all(4.0),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.red[800],
+                  color: Colors.red[600],
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -252,8 +303,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 // print(events);
                 children.add(
                   Positioned(
-                    top: 0,
-                    child: _buildEventMarker(context, date),
+                    top: 1,
+                    right: 1,
+                    child: _buildEventMarker(date, events),
                   ),
                 );
               }
@@ -270,14 +322,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           onDaySelected: (date, events, holidays) {
             _onDaySelected(context, date);
-            // setState(() {
-            //   _selectedEvents = events;
-            // });
           },
           calendarController: _calendarController,
           startingDayOfWeek: StartingDayOfWeek.monday,
           events: _events,
           headerStyle: HeaderStyle(
+
             leftChevronIcon:
                 Icon(Icons.arrow_back_ios, size: 15, color: Colors.white),
             rightChevronIcon:
@@ -292,5 +342,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.red, fontSize: 13, fontWeight: FontWeight.bold),
           ),
         ));
+  }
+
+  Widget _buildEventList() {
+    return ListView(
+      children: _selectedEvents[0]
+          .map((event) => Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.8),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        margin:
+        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        child: ListTile(
+          title: Text("help"),
+          onTap: () => print('$event tapped!'),
+        ),
+      ))
+          .toList(),
+    );
   }
 }

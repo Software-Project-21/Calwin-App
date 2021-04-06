@@ -158,8 +158,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
           ),
-          Text((_selectedEvents == null) ? "  No Events" : "  Events",
-              style: Theme.of(context).primaryTextTheme.headline1),
+          SizedBox(height: 10),
+          Center(
+            child: Text((_selectedEvents == null) ? "  No Events" : "  Events",
+                style: Theme.of(context).primaryTextTheme.headline1),
+          ),
+          SizedBox(height: 10),
           Container(
             child: (_selectedEvents == null) ? Container() : _buildEventList(),
           ),
@@ -220,13 +224,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _calendarController.isSelected(date)
-            ? Colors.white
-            : _calendarController.isToday(date)
-                ? Colors.yellow
-                : Colors.orange,
-      ),
+          shape: BoxShape.circle,
+          color: _calendarController.isSelected(date)
+              ? Colors.white
+              : _calendarController.isToday(date)
+                  ? Colors.greenAccent[400]
+                  : Colors.yellow),
       width: 16.0,
       height: 16.0,
       child: Center(
@@ -237,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Colors.black
                 : _calendarController.isToday(date)
                     ? Colors.black
-                    : Colors.white,
+                    : Colors.black,
             fontSize: 12.0,
           ),
         ),
@@ -255,113 +258,111 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget calendar() {
     return Container(
-        margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: kRed,
-          borderRadius: BorderRadius.circular(6),
-          // gradient:
-          //     LinearGradient(colors: [Colors.red[600], Colors.red[400]]),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: new Offset(0.0, 5))
-          ],
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: kRed,
+        borderRadius: BorderRadius.circular(6),
+        // gradient:
+        //     LinearGradient(colors: [Colors.red[600], Colors.red[400]]),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+              color: Colors.black12, blurRadius: 5, offset: new Offset(0.0, 5))
+        ],
+      ),
+      child: TableCalendar(
+        calendarStyle: CalendarStyle(
+          // canEventMarkersOverflow: true,
+          //markersColor: Colors.white,
+          weekdayStyle:
+              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          holidayStyle: TextStyle()
+              .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+          eventDayStyle: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold), // fix.
+          outsideWeekendStyle: TextStyle(color: Colors.white60),
+          outsideStyle: TextStyle(color: Colors.white60),
+          weekendStyle:
+              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          outsideDaysVisible: true,
         ),
-        child: TableCalendar(
-          calendarStyle: CalendarStyle(
-            // canEventMarkersOverflow: true,
-            // markersColor: Colors.white,
-            weekdayStyle:
-                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            holidayStyle: TextStyle()
-                .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-            eventDayStyle: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold), // fix.
-            // todayColor: Colors.black12,
-            // todayStyle: TextStyle(
-            //     color: Colors.white,
-            //     fontSize: 1,
-            //     fontWeight: FontWeight.bold),
-            outsideWeekendStyle: TextStyle(color: Colors.white60),
-            outsideStyle: TextStyle(color: Colors.white60),
-            weekendStyle:
-                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            renderDaysOfWeek: true,
-            outsideDaysVisible: true,
-          ),
-          holidays: holidays_list,
-          builders: CalendarBuilders(
-            selectedDayBuilder: (context, date, events) {
-              return Container(
-                margin: const EdgeInsets.all(4.0),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.black87,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  date.day.toString(),
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekdayStyle: TextStyle().copyWith(color: Colors.yellow[600]),
+          weekendStyle: TextStyle().copyWith(color: Colors.greenAccent[400]),
+        ),
+        holidays: holidays_list,
+        builders: CalendarBuilders(
+          selectedDayBuilder: (context, date, events) {
+            return Container(
+              margin: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                date.day.toString(),
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
+            );
+          },
+          todayDayBuilder: (context, date, events) => Container(
+              margin: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.red[600],
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                date.day.toString(),
+                style: TextStyle(color: Colors.white),
+              )),
+          markersBuilder: (context, date, events, holidays) {
+            final children = <Widget>[];
+            if (events.isNotEmpty) {
+              // print(events);
+              children.add(
+                Positioned(
+                  top: 1,
+                  right: 1,
+                  child: _buildEventMarker(date, events),
                 ),
               );
-            },
-            todayDayBuilder: (context, date, events) => Container(
-                margin: const EdgeInsets.all(4.0),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.red[600],
-                  shape: BoxShape.circle,
+            }
+            if (holidays.isNotEmpty) {
+              children.add(
+                Positioned(
+                  bottom: 0,
+                  child: _buildHolidaysMarker(context, date),
                 ),
-                child: Text(
-                  date.day.toString(),
-                  style: TextStyle(color: Colors.white),
-                )),
-            markersBuilder: (context, date, events, holidays) {
-              final children = <Widget>[];
-              if (events.isNotEmpty) {
-                // print(events);
-                children.add(
-                  Positioned(
-                    top: 1,
-                    right: 1,
-                    child: _buildEventMarker(date, events),
-                  ),
-                );
-              }
-              if (holidays.isNotEmpty) {
-                children.add(
-                  Positioned(
-                    bottom: 0,
-                    child: _buildHolidaysMarker(context, date),
-                  ),
-                );
-              }
-              return children;
-            },
-          ),
-          onDaySelected: (date, events, holidays) {
-            _onDaySelected(context, date);
+              );
+            }
+            return children;
           },
-          calendarController: _calendarController,
-          startingDayOfWeek: StartingDayOfWeek.monday,
-          events: _events,
-          headerStyle: HeaderStyle(
-            leftChevronIcon:
-                Icon(Icons.arrow_back_ios, size: 15, color: Colors.white),
-            rightChevronIcon:
-                Icon(Icons.arrow_forward_ios, size: 15, color: Colors.white),
-            titleTextStyle:
-                GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
-            formatButtonDecoration: BoxDecoration(
-              color: Colors.white60,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            formatButtonTextStyle: GoogleFonts.montserrat(
-                color: Colors.red, fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+        onDaySelected: (date, events, holidays) {
+          _onDaySelected(context, date);
+        },
+        calendarController: _calendarController,
+        startingDayOfWeek: StartingDayOfWeek.monday,
+        events: _events,
+        headerStyle: HeaderStyle(
+          formatButtonShowsNext: false,
+          leftChevronIcon:
+              Icon(Icons.arrow_back_ios, size: 17, color: Colors.white),
+          rightChevronIcon:
+              Icon(Icons.arrow_forward_ios, size: 17, color: Colors.white),
+          titleTextStyle:
+              GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+          formatButtonDecoration: BoxDecoration(
+            color: Colors.white60,
+            borderRadius: BorderRadius.circular(20),
           ),
-        ));
+          formatButtonTextStyle: GoogleFonts.montserrat(
+              color: Colors.red, fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 
   Widget _buildEventList() {

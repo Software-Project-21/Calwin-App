@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:calwin/Model/Database.dart';
+import 'package:uuid/uuid.dart';
 
 List<String> emails = [];
 
@@ -14,6 +15,8 @@ class eventsChooser extends StatefulWidget {
 
   _eventsChooserState createState() => _eventsChooserState();
 }
+
+var uuid = Uuid();
 
 class _eventsChooserState extends State<eventsChooser> {
   List<String> _emails;
@@ -54,6 +57,7 @@ class _eventsChooserState extends State<eventsChooser> {
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
                 var curevent = <String, dynamic>{
+                  'id': uuid.v4(),
                   'title': data['title'],
                   'description': data['description'],
                   'startTime': _startDateTime,

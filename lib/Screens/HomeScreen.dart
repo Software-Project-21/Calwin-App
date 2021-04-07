@@ -78,8 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Calendar",
-                    style: Theme.of(context).primaryTextTheme.headline1),
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Text("Calwin",
+                      style: Theme.of(context).primaryTextTheme.headline1),
+                ),
                 Row(children: [
                   Consumer<ThemeNotifier>(
                       builder: (context, notifier, child) => IconButton(
@@ -159,9 +162,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
           ),
           SizedBox(height: 10),
-          Center(
+          Padding(
+            padding: EdgeInsets.only(left: 5),
             child: Text((_selectedEvents == null) ? "  No Events" : "  Events",
-                style: Theme.of(context).primaryTextTheme.headline1),
+                style: Theme.of(context).primaryTextTheme.headline2),
           ),
           SizedBox(height: 10),
           Container(

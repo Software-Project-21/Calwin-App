@@ -12,8 +12,9 @@ ThemeData light = ThemeData(
   primaryTextTheme: TextTheme(
     // Section Headings
     headline1: GoogleFonts.montserrat(
+        color: kGrey, fontSize: 30, fontWeight: FontWeight.bold),
+    headline2: GoogleFonts.montserrat(
         color: kGrey, fontSize: 22, fontWeight: FontWeight.bold),
-
     // List Font
     bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 16),
   ),
@@ -26,8 +27,9 @@ ThemeData dark = ThemeData(
     primaryTextTheme: TextTheme(
       // Section Headings
       headline1: GoogleFonts.montserrat(
+          color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+      headline2: GoogleFonts.montserrat(
           color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-
       // List Font
       bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
     ));

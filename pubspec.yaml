@@ -36,6 +36,7 @@ dependencies:
   flutter_cupertino_date_picker: ^1.0.26+2
   firebase_helpers: ^0.3.1
   uuid: 3.0.3
+  tuple: ^2.0.0
 
 dev_dependencies:
   flutter_test:

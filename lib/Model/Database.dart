@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 import 'package:uuid/uuid.dart';
 
 List<dynamic> events;
@@ -101,14 +102,31 @@ class CalwinDatabase {
     await _db.collection('users').doc(userID).update({'events': updEvents});
   }
 
-  static Future<void> modifyEvent(String eventID, String userID, List<dynamic> updatedEvent) async {
+  static Future<void> modifyEvent(
+      String eventID, String userID, List<dynamic> updatedEvent) async {
     for (int i = 0; i < events.length; i++) {
       var cc = events[i];
-      if (cc['id'] == eventID){
+      if (cc['id'] == eventID) {
         events[i] = updatedEvent;
         break;
       }
     }
     await _db.collection('users').doc(userID).update({'events': events});
+  }
+
+  static Future<void> getAllEmails() async {
+    List<dynamic> EmailsList = [];
+    _db.collection('users').snapshots().listen((snapshot) {
+      List allDocs = snapshot.docs;
+      int len = snapshot.docs.length;
+      for (int i = 0; i < len; i++) {
+        Map<String, String> curUser = {
+          'email': allDocs[i].data()['email'].toString(),
+          'userID': allDocs[i].reference.id
+        };
+        EmailsList.add(curUser);
+      }
+    });
+    return EmailsList;
   }
 }

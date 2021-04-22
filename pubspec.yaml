@@ -17,7 +17,7 @@ dependencies:
   cloud_firestore: ^1.0.1
   google_sign_in: ^5.0.0
   provider: ^5.0.0
-  rive: ^0.6.8
+  rive: ^0.7.1
   font_awesome_flutter: ^9.0.0
   table_calendar: ^2.3.3
   loading: ^1.0.2
@@ -36,6 +36,9 @@ dependencies:
   flutter_cupertino_date_picker: ^1.0.26+2
   firebase_helpers: ^0.3.1
   uuid: 3.0.3
+  page_transition: "^1.1.7+6"
+  tuple: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -50,11 +53,8 @@ flutter:
      - assets/google_logo.png
      - assets/bgtop.jpeg
      - assets/marty_v6.riv
+     - assets/buggy.riv
      - assets/default_profile.png
-     - assets/event_pages.riv
-     - assets/event_pages2.riv
-     - assets/knight063.riv
-     - assets/iron_giant2.riv
 
   
   # fonts:

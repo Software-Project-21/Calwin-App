@@ -12,13 +12,11 @@ ThemeData light = ThemeData(
   primaryTextTheme: TextTheme(
     // Section Headings
     headline1: GoogleFonts.montserrat(
-        color: Color.fromRGBO(59, 57, 60, 1),
-        fontSize: 22,
-        fontWeight: FontWeight.bold),
-
+        color: kGrey, fontSize: 30, fontWeight: FontWeight.bold),
+    headline2: GoogleFonts.montserrat(
+        color: kGrey, fontSize: 22, fontWeight: FontWeight.bold),
     // List Font
-    bodyText1: GoogleFonts.montserrat(
-        color: Color.fromRGBO(105, 105, 108, 1), fontSize: 16),
+    bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 16),
   ),
 );
 
@@ -29,15 +27,11 @@ ThemeData dark = ThemeData(
     primaryTextTheme: TextTheme(
       // Section Headings
       headline1: GoogleFonts.montserrat(
-          color: Color.fromRGBO(250, 250, 250, 1),
-          fontSize: 22,
-          fontWeight: FontWeight.bold),
-
+          color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+      headline2: GoogleFonts.montserrat(
+          color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       // List Font
-      bodyText1: GoogleFonts.montserrat(
-          color: Color.fromRGBO(200, 200, 200, 1), fontSize: 16),
-
-
+      bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
     ));
 
 class ThemeNotifier extends ChangeNotifier {

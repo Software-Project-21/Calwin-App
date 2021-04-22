@@ -18,13 +18,11 @@ class _SignInScreenState extends State<SignInScreen> {
   void initState() {
     super.initState();
     rootBundle.load('assets/marty_v6.riv').then(
-      (data) async {
-        final file = RiveFile();
-        if (file.import(data)) {
-          final artboard = file.mainArtboard;
-          artboard.addController(_controller = SimpleAnimation('Animation1'));
-          setState(() => _riveArtboard = artboard);
-        }
+          (data) async {
+        final file = RiveFile.import(data);
+        final artboard = file.mainArtboard;
+        artboard.addController(_controller = SimpleAnimation('Animation1'));
+        setState(() => _riveArtboard = artboard);
       },
     );
   }

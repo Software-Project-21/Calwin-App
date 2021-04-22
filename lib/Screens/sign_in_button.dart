@@ -4,13 +4,6 @@ import 'package:calwin/Utils/Authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis_auth/auth.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:googleapis/calendar/v3.dart' as cal;
-
-import '../secrets.dart';
-import 'CalenderScreen.dart';
 import 'HomeScreen.dart';
 
 class GoogleSignInButton extends StatefulWidget {

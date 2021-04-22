@@ -92,6 +92,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  curved_animation_controller:
+    dependency: transitive
+    description:
+      name: curved_animation_controller
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   datetime_picker_formfield:
     dependency: "direct main"
     description:
@@ -523,6 +530,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slide_drawer:
+    dependency: "direct main"
+    description:
+      name: slide_drawer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   source_span:
     dependency: transitive
     description:

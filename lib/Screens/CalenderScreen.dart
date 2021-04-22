@@ -78,6 +78,19 @@ class _CalenderScreenState extends State<CalenderScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Consumer<ThemeNotifier>(
+                  builder: (context, notifier, child) => IconButton(
+                      icon: notifier.isDarkTheme
+                          ? Icon(
+                        Icons.arrow_back_ios,
+                        size: 20,
+                        color: Colors.white,
+                      )
+                          : Icon(Icons.arrow_back_ios),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      }),
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
                   child: Text("Calwin",
@@ -99,37 +112,6 @@ class _CalenderScreenState extends State<CalenderScreen> {
                               _events = CalwinDatabase.getAllEvents(_user.uid);
                             });
                           })),
-                  Consumer<ThemeNotifier>(
-                      builder: (context, notifier, child) => IconButton(
-                          icon: notifier.isDarkTheme
-                              ? FaIcon(
-                                  FontAwesomeIcons.moon,
-                                  size: 20,
-                                  color: Colors.white,
-                                )
-                              : Icon(Icons.wb_sunny),
-                          onPressed: () => {notifier.toggleTheme()})),
-                  Consumer<ThemeNotifier>(
-                      builder: (context, notifier, child) => IconButton(
-                          icon: notifier.isDarkTheme
-                              ? Icon(
-                                  Icons.exit_to_app_rounded,
-                                  size: 20,
-                                  color: Colors.white,
-                                )
-                              : Icon(Icons.exit_to_app_rounded),
-                          onPressed: () async {
-                            setState(() {
-                              _isSigningOut = true;
-                            });
-                            await Authentication.signOut(context: context);
-                            setState(() {
-                              _isSigningOut = false;
-                            });
-                            Navigator.of(context)
-                                .pushReplacement(_routeToSignInScreen());
-                          }),
-                          ),
                 ],
                 ),
               ],

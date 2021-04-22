@@ -64,7 +64,7 @@ class _eventsChooserState extends State<eventsChooser> {
                   'endTime': _finishDateTime,
                   'attendeeEmail': emails
                 };
-                print(emails);
+                CalwinDatabase.getAllEmails();
                 CalwinDatabase.addEvents(curevent, widget.user.uid);
                 Navigator.pop(context);
               },

@@ -1,3 +1,4 @@
+import 'package:calwin/Screens/holidays.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Screens/sign_in.dart';
@@ -6,6 +7,7 @@ import 'Utils/theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
+  // getHolidayDetails();
   runApp(MyApp());
 }
 

@@ -47,6 +47,10 @@ class CalwinDatabase {
       }
     });
   }
+  static List<dynamic> getListEvents(String userID){
+    getEvents(userID);
+    return events;
+  }
 
   static Map<DateTime, List> getAllEvents(String userID) {
     getEvents(userID);

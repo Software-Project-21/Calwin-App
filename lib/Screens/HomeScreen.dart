@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:core';
+import 'package:calwin/Screens/AllHolidayScreen.dart';
 import 'package:calwin/Screens/CalenderScreen.dart';
-import 'package:calwin/Screens/sign_in.dart';
-import 'package:calwin/Utils/Authentication.dart';
+import 'package:calwin/Screens/SettingsScreen.dart';
+import 'package:calwin/Screens/ViewAllEvent.dart';
 import 'package:calwin/Utils/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:googleapis/slides/v1.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/src/consumer.dart';
 import 'package:rive/rive.dart';
-import 'package:slide_drawer/slide_drawer.dart';
 
+import 'eventsChooser.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -26,29 +25,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Artboard _riveArtboard;
+  Artboard _riveArtboard2;
   RiveAnimationController _controller;
-  bool _isSigningOut = false;
+  RiveAnimationController _controller2;
   double maxHeight;
   double maxWidth;
-
-  Route _routeToSignInScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -60,6 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => _riveArtboard = artboard);
       },
     );
+    rootBundle.load('assets/turtle.riv').then(
+      (data) async {
+        final file = RiveFile.import(data);
+        final artboard = file.mainArtboard;
+        artboard.addController(_controller2 = SimpleAnimation('Swim'));
+        setState(() => _riveArtboard2 = artboard);
+      },
+    );
   }
 
   @override
@@ -69,24 +58,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('Welcome,',
-              style: Theme.of(context).primaryTextTheme.headline1),
-          actions: [
-            Consumer<ThemeNotifier>(
-              builder: (context2, notifier, child) => IconButton(
-                icon: notifier.isDarkTheme
-                    ? Icon(
-                        Icons.menu,
-                        size: 30,
-                        color: notifier.isDarkTheme
-                            ? Colors.white
-                            : Colors.black54,
-                      )
-                    : Icon(Icons.menu),
-                // onPressed: () => SlideDrawer.of(context).toggle()
-              ),
-            )
-          ]),
+        title: Text('Welcome,',
+            style: Theme.of(context).primaryTextTheme.headline1),
+        actions: [
+          Consumer<ThemeNotifier>(
+            builder: (context2, notifier, child) => IconButton(
+              icon: notifier.isDarkTheme
+                  ? Icon(
+                      Icons.settings,
+                      size: 30,
+                      color:
+                          notifier.isDarkTheme ? Colors.white : Colors.black54,
+                    )
+                  : Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        duration: Duration(milliseconds: 100),
+                        child: SettingsScreen(
+                          user: widget.user,
+                        )));
+              },
+            ),
+          )
+        ],
+      ),
       backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
         children: [
@@ -170,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ]),
                       ),
-                    ),
+                    ), // Goto calender
                     SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +189,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.fade,
+                                          duration: Duration(milliseconds: 300),
+                                          child: AllHolidayScreen(),
+                                      ),
+                                  );
+                                },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -272,31 +279,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.fade,
+                                      duration: Duration(milliseconds: 300),
+                                      child: ViewAllEvents(
+                                        user: widget.user,
+                                      )));
+                            },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  height: 110,
+                                  child: _riveArtboard2 == null
+                                      ? const SizedBox()
+                                      : Rive(
+                                          artboard: _riveArtboard2,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                ),
                                 Text(
-                                  "02hr",
+                                  "View",
                                   style: GoogleFonts.montserrat(
                                       color: Colors.white,
                                       fontSize: 54,
                                       fontWeight: FontWeight.w700),
                                 ),
-                                Text("26min",
+                                Text("Events",
                                     style: GoogleFonts.montserrat(
-                                        color: Colors.white24,
+                                        color: Colors.white70,
                                         fontSize: 40,
                                         fontWeight: FontWeight.w700)),
-                                Text("chill\ntime",
-                                    style: GoogleFonts.montserrat(
-                                        color: Colors.black45,
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w700)),
-                                Text("remaining",
-                                    style: GoogleFonts.montserrat(
-                                        color: Colors.black45, fontSize: 15))
                               ],
                             ),
                           ),
@@ -306,6 +326,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 10,
                     ),
+                    Container(
+                      height: 150,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.pressed))
+                                return Colors.lightBlueAccent;
+                              return Colors
+                                  .green; // Use the component's default.
+                            },
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.fade,
+                                  duration: Duration(milliseconds: 300),
+                                  child: eventsChooser(
+                                    user: widget.user,
+                                  )));
+                        },
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: maxWidth / 20,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Create",
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 42,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  Text("Events",
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.white60,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w700)),
+                                ],
+                              ),
+                              SizedBox(
+                                width: maxWidth / 7,
+                              ),
+                              Icon(
+                                Icons.add_circle,
+                                size: 80,
+                              ),
+                            ]),
+                      ),
+                    ), // create events
                     SizedBox(
                       height: 50,
                     ),
@@ -319,70 +397,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-
-// Widget Drawert() {
-//   return Drawer(
-//     elevation: 20,
-//     child: Container(
-//       color: Theme
-//           .of(context)
-//           .primaryColor,
-//       padding: EdgeInsets.only(left: 20, top: 45),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Center(
-//             child: CircleAvatar(
-//               radius: 70,
-//               backgroundImage: NetworkImage(widget.user.photoURL),
-//             ),
-//           ),
-//
-//           Consumer<ThemeNotifier>(
-//               builder: (context, notifier, child) =>
-//                   IconButton(
-//                       icon: notifier.isDarkTheme
-//                           ? FaIcon(
-//                         FontAwesomeIcons.moon,
-//                         size: 20,
-//                         color: notifier.isDarkTheme
-//                             ? Colors.white
-//                             : Colors.black54,
-//                       )
-//                           : Icon(Icons.wb_sunny),
-//                       onPressed: () => {notifier.toggleTheme()})),
-//           Consumer<ThemeNotifier>(
-//             builder: (context2, notifier, child) =>
-//                 IconButton(
-//                   icon: notifier.isDarkTheme
-//                       ? Icon(
-//                     Icons.exit_to_app_rounded,
-//                     size: 20,
-//                     color: notifier.isDarkTheme
-//                         ? Colors.white
-//                         : Colors.black54,
-//                   )
-//                       : Icon(Icons.exit_to_app_rounded),
-//                   onPressed: () async {
-//                     setState(() {
-//                       _isSigningOut = true;
-//                     });
-//                     await Authentication.signOut(context: context);
-//                     setState(() {
-//                       _isSigningOut = false;
-//                     });
-//                     Navigator.of(context)
-//                         .pushReplacement(_routeToSignInScreen());
-//                   },
-//                 ),
-//           ),
-//           Expanded(
-//             child: Container(),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tuple/tuple.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:uuid/uuid.dart';
 
 List<dynamic> events;
@@ -114,19 +114,24 @@ class CalwinDatabase {
     await _db.collection('users').doc(userID).update({'events': events});
   }
 
-  static Future<void> getAllEmails() async {
-    List<dynamic> EmailsList = [];
-    _db.collection('users').snapshots().listen((snapshot) {
-      List allDocs = snapshot.docs;
-      int len = snapshot.docs.length;
-      for (int i = 0; i < len; i++) {
-        Map<String, String> curUser = {
-          'email': allDocs[i].data()['email'].toString(),
-          'userID': allDocs[i].reference.id
-        };
-        EmailsList.add(curUser);
-      }
+  static Future<String> checkEmail(String userEmail) async {
+    _db
+        .collection("users")
+        .where("email", isEqualTo: userEmail)
+        .snapshots()
+        .listen((event) {
+      var mail = event.docs.single.data()["email"];
+      print(mail);
+      return mail;
+      /*
+      var snapshot = await _db
+        .collection("users")
+        .where("email", isEqualTo: userEmail)
+        .get();
+    String ha = snapshot.docs.single.data()["email"];
+    return ha;
+    */
     });
-    return EmailsList;
+    return "";
   }
 }

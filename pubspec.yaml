@@ -37,7 +37,6 @@ dependencies:
   firebase_helpers: ^0.3.1
   uuid: 3.0.3
   page_transition: "^1.1.7+6"
-  tuple: ^2.0.0
   slide_drawer: ^1.0.1
 
 dev_dependencies:

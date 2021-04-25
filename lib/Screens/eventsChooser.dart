@@ -1,9 +1,11 @@
+import 'package:calwin/Utils/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:calwin/Model/Database.dart';
 import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
 
 List<String> emails = [];
 List<String> realEmails = [];
@@ -50,27 +52,176 @@ class _eventsChooserState extends State<eventsChooser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.clear,
-            color: Colors.redAccent[400],
+      backgroundColor: Theme.of(context).primaryColor,
+      body: ListView(
+        children: <Widget>[
+          //add event form
+          Container(
+            padding: EdgeInsets.all(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Consumer<ThemeNotifier>(
+                  builder: (context, notifier, child) => IconButton(
+                      icon: notifier.isDarkTheme
+                          ? Icon(
+                              Icons.arrow_back_ios,
+                              size: 20,
+                              color: Colors.white,
+                            )
+                          : Icon(Icons.arrow_back_ios),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      }),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Text("Add Event",
+                      style: Theme.of(context).primaryTextTheme.headline1),
+                ),
+                SizedBox(
+                  width: 30,
+                ),
+              ],
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
+          FormBuilder(
+            key: _formKey,
+            child: Padding(
+              padding: EdgeInsets.only(left: 10, right: 10, top: 30),
+              child: Column(
+                children: [
+                  FormBuilderTextField(
+                    name: "title",
+                    style: Theme.of(context).primaryTextTheme.bodyText2,
+                    // initialValue: widget.event?.title,
+                    decoration: InputDecoration(
+                      hintText: "Add Title",
+                      hintStyle: Theme.of(context).accentTextTheme.bodyText1,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: kRed,
+                        ),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.short_text,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  FormBuilderTextField(
+                    name: "description",
+                    style: Theme.of(context).primaryTextTheme.bodyText2,
+                    // initialValue: widget.event?.description,
+                    minLines: 1,
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      hintText: "Add Details",
+                      hintStyle: Theme.of(context).accentTextTheme.bodyText1,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: kRed,
+                        ),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.short_text,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  GestureDetector(
+                    onTap: () => _selectDate(0),
+                    child: AbsorbPointer(
+                      child: TextField(
+                        controller: _textEditingController1,
+                        style: Theme.of(context).primaryTextTheme.bodyText2,
+                        decoration: InputDecoration(
+                            hintText: 'Event Start Date & Time',
+                            labelStyle:
+                                Theme.of(context).primaryTextTheme.bodyText2,
+                            hintStyle:
+                                Theme.of(context).accentTextTheme.bodyText1,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: kRed,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            prefixIcon: Icon(
+                              CupertinoIcons.calendar_badge_plus,
+                              color: Theme.of(context).accentColor,
+                            )),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  GestureDetector(
+                    onTap: () => _selectDate(1),
+                    child: AbsorbPointer(
+                      child: TextField(
+                        style: Theme.of(context).primaryTextTheme.bodyText2,
+                        controller: _textEditingController2,
+                        decoration: InputDecoration(
+                            hintText: 'Event Finish Date & Time',
+                            hintStyle:
+                                Theme.of(context).accentTextTheme.bodyText1,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: kRed,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            prefixIcon: Icon(CupertinoIcons.calendar_badge_plus,
+                                color: Theme.of(context).accentColor)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  EmailInput(hint: 'Add People', parentEmails: _emails),
+                  SizedBox(
+                    height: 15,
+                  ),
+                ],
+              ),
+            ),
+          ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(left: 130, right: 130),
             child: ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.resolveWith<Size>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.pressed)) Size(50, 50);
+                    return Size(50, 40);
+                  },
+                ),
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.pressed))
+                      return Colors.lightBlueAccent;
+                    return kRed; // Use the component's default.
+                  },
+                ),
+              ),
               onPressed: () async {
                 _formKey.currentState.save();
                 final data =
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
                 await getActualEmails();
+                realEmails.clear();
                 var curevent = <String, dynamic>{
                   'id': uuid.v4(),
                   'title': data['title'],
@@ -85,68 +236,12 @@ class _eventsChooserState extends State<eventsChooser> {
                     widget.user.displayName, widget.user.email, emails);
                 Navigator.pop(context);
               },
-              child: Text("Save"),
+              child: Text(
+                "Save",
+                style: Theme.of(context).primaryTextTheme.bodyText1,
+              ),
             ),
           )
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: <Widget>[
-          //add event form
-          FormBuilder(
-            key: _formKey,
-            child: Column(
-              children: [
-                FormBuilderTextField(
-                  name: "title",
-                  // initialValue: widget.event?.title,
-                  decoration: InputDecoration(
-                      hintText: "Add Title",
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.only(left: 48.0)),
-                ),
-                Divider(),
-                FormBuilderTextField(
-                  name: "description",
-                  // initialValue: widget.event?.description,
-                  minLines: 1,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                      hintText: "Add Details",
-                      border: InputBorder.none,
-                      prefixIcon: Icon(Icons.short_text)),
-                ),
-                Divider(),
-                GestureDetector(
-                  onTap: () => _selectDate(0),
-                  child: AbsorbPointer(
-                    child: TextField(
-                      controller: _textEditingController1,
-                      decoration: InputDecoration(
-                          hintText: 'Event Start Date & Time',
-                          prefixIcon: Icon(CupertinoIcons.calendar_badge_plus)),
-                    ),
-                  ),
-                ),
-                Divider(),
-                GestureDetector(
-                  onTap: () => _selectDate(1),
-                  child: AbsorbPointer(
-                    child: TextField(
-                      controller: _textEditingController2,
-                      decoration: InputDecoration(
-                          hintText: 'Event Finish Date & Time',
-                          prefixIcon: Icon(CupertinoIcons.calendar_badge_plus)),
-                    ),
-                  ),
-                ),
-                Divider(),
-                EmailInput(hint: 'Add People', parentEmails: _emails),
-                Divider(),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -286,10 +381,22 @@ class _EmailInputState extends State<EmailInput> {
           ),
         ),
         TextField(
+          style: Theme.of(context).primaryTextTheme.bodyText2,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-              hintText: widget.hint,
-              prefixIcon: Icon(CupertinoIcons.person_3_fill)),
+            hintStyle: Theme.of(context).accentTextTheme.bodyText1,
+            hintText: widget.hint,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: kRed,
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            prefixIcon: Icon(
+              CupertinoIcons.person_3_fill,
+              color: Theme.of(context).accentColor,
+            ),
+          ),
           controller: _emailController,
           focusNode: focus,
           onChanged: (String val) {

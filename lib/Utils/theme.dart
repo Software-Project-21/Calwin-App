@@ -16,7 +16,11 @@ ThemeData light = ThemeData(
     headline2: GoogleFonts.montserrat(
         color: kGrey, fontSize: 22, fontWeight: FontWeight.bold),
     // List Font
-    bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 16),
+    bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 20),
+    bodyText2: GoogleFonts.montserrat(color: kGrey, fontSize: 16),
+  ),
+  accentTextTheme: TextTheme(
+    bodyText1: GoogleFonts.montserrat(color: Colors.black54, fontSize: 16),
   ),
 );
 
@@ -31,8 +35,13 @@ ThemeData dark = ThemeData(
       headline2: GoogleFonts.montserrat(
           color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       // List Font
-      bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
-    ));
+      bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 20),
+      bodyText2: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
+    ),
+    accentTextTheme: TextTheme(
+      bodyText1: GoogleFonts.montserrat(color: Colors.white70, fontSize: 16),
+    ),
+);
 
 class ThemeNotifier extends ChangeNotifier {
   final String key = "theme";

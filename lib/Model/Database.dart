@@ -8,13 +8,13 @@ import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:uuid/uuid.dart';
 
-List<String> realEmails = [];
 List<dynamic> events;
+List<dynamic> invitations = [];
+List<dynamic> inviteInfo = [];
 var uuid = Uuid();
 
 class CalwinDatabase {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
-
   static Future<void> addUser(Map<String, dynamic> task, String user_id) async {
     await _db
         .collection('users')
@@ -120,30 +120,67 @@ class CalwinDatabase {
     await _db.collection('users').doc(userID).update({'events': events});
   }
 
-  static Future<void> checkEmail(String userEmail) async {
-    bool found = false;
-    var snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .where("email", isEqualTo: userEmail)
-        .snapshots();
-    snapshot.listen((event) {
-      if (event.docs.isNotEmpty) {
-        realEmails.add(userEmail);
+  static Future<bool> checkEmail(String userEmail) async {
+    QuerySnapshot res = await _db.collection("users").get();
+    List<DocumentSnapshot> documents = res.docs;
+    for (int i = 0; i < documents.length; i++) {
+      if (documents[i].data()['email'] == userEmail) {
+        print("Found in DB " + userEmail);
+        return true;
       }
-    });
-/*
-    .listen((event) async {
-    print("fucked");
-    var mail = await event.docs.single.data()["email"];
-    print(mail);
-    });
-
-    print("  " + found.toString());
-    return found;
-    */
+    }
+    return false;
   }
 
-  static List<String> fetchActualEmails() {
-    return realEmails;
+  static Future<void> addInvite(
+      String eventID, String senderName, String userID) async {
+    await _db.collection('users').doc(userID).update({
+      'invitations': FieldValue.arrayUnion([
+        {'id': eventID, 'name': senderName}
+      ])
+    });
+  }
+
+  static Future<void> sendInvites(String eventID, String senderName,
+      String senderEmail, List<String> emails) async {
+    QuerySnapshot res = await _db.collection("users").get();
+    List<DocumentSnapshot> documents = res.docs;
+    for (int i = 0; i < documents.length; i++) {
+      String mail = documents[i].data()['email'];
+      if (emails.contains(mail) && mail != senderEmail) {
+        addInvite(eventID, senderName, documents[i].id);
+      }
+    }
+  }
+
+  static Future<void> fetchInvites(String userID) async {
+    await _db.collection('users').doc(userID).get().then((value) {
+      {
+        invitations = value.data()['invitations'];
+      }
+    });
+  }
+
+  static Future<void> getInviteInfo(String userID) async {
+    await fetchInvites(userID);
+    for (int i = 0; i < invitations.length; i++) {
+      await _db
+          .collection('events')
+          .doc(invitations[i]['id'])
+          .get()
+          .then((value) {
+        {
+          inviteInfo.add(value.data());
+        }
+      });
+    }
+  }
+
+  static List<dynamic> getListInvites(String userID) {
+    getInviteInfo(userID);
+    print(invitations);
+    print("pyo");
+    print(inviteInfo);
+    return (inviteInfo == []) ? null : inviteInfo;
   }
 }

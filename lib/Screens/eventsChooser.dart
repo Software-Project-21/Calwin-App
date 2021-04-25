@@ -6,6 +6,7 @@ import 'package:calwin/Model/Database.dart';
 import 'package:uuid/uuid.dart';
 
 List<String> emails = [];
+List<String> realEmails = [];
 
 class eventsChooser extends StatefulWidget {
   final User user;
@@ -26,11 +27,10 @@ class _eventsChooserState extends State<eventsChooser> {
   final TextEditingController _textEditingController2 = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   DateTime _startDateTime, _finishDateTime;
-  int len;
   @override
   void initState() {
     // TODO: implement initState
-    print(len);
+    realEmails.clear();
     emails.clear();
     super.initState();
   }
@@ -38,13 +38,12 @@ class _eventsChooserState extends State<eventsChooser> {
   Future<void> getActualEmails() async {
     if (emails == null) return;
     for (int i = 0; i < emails.length; i++) {
-      await CalwinDatabase.checkEmail(emails[i]);
-      // print(mail.toString() + "   " + emails[i]);
-      // if (mail) {
-      //   realEmails.add(emails[i]);
-      //   print("gud");
-      //   print(emails[i]);
-      // }
+      var mail = await CalwinDatabase.checkEmail(emails[i]);
+      if (mail) {
+        realEmails.add(emails[i]);
+        print("gud");
+        print(emails[i]);
+      }
     }
   }
 
@@ -71,22 +70,19 @@ class _eventsChooserState extends State<eventsChooser> {
                 final data =
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
-                realEmails.clear();
-                getActualEmails();
-                List<String> res;
-                Future.delayed(Duration(seconds: 5), () {
-                  res = CalwinDatabase.fetchActualEmails();
-                });
-                print(res);
+                await getActualEmails();
                 var curevent = <String, dynamic>{
                   'id': uuid.v4(),
                   'title': data['title'],
                   'description': data['description'],
                   'startTime': _startDateTime,
                   'endTime': _finishDateTime,
-                  'attendeeEmail': res
+                  'attendeeEmail': realEmails
                 };
+
                 CalwinDatabase.addEvents(curevent, widget.user.uid);
+                CalwinDatabase.sendInvites(curevent['id'],
+                    widget.user.displayName, widget.user.email, emails);
                 Navigator.pop(context);
               },
               child: Text("Save"),

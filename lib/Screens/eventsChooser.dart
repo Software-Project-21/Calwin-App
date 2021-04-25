@@ -6,7 +6,6 @@ import 'package:calwin/Model/Database.dart';
 import 'package:uuid/uuid.dart';
 
 List<String> emails = [];
-List<String> realEmails = [];
 
 class eventsChooser extends StatefulWidget {
   final User user;
@@ -27,24 +26,25 @@ class _eventsChooserState extends State<eventsChooser> {
   final TextEditingController _textEditingController2 = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   DateTime _startDateTime, _finishDateTime;
+  int len;
   @override
   void initState() {
     // TODO: implement initState
+    print(len);
     emails.clear();
-    realEmails.clear();
     super.initState();
   }
 
   Future<void> getActualEmails() async {
     if (emails == null) return;
     for (int i = 0; i < emails.length; i++) {
-      String mail = await CalwinDatabase.checkEmail(emails[i]);
-      print(mail + "   " + emails[i]);
-      if (mail == emails[i]) {
-        realEmails.add(emails[i]);
-        print("gud");
-        print(emails[i]);
-      }
+      await CalwinDatabase.checkEmail(emails[i]);
+      // print(mail.toString() + "   " + emails[i]);
+      // if (mail) {
+      //   realEmails.add(emails[i]);
+      //   print("gud");
+      //   print(emails[i]);
+      // }
     }
   }
 
@@ -66,22 +66,25 @@ class _eventsChooserState extends State<eventsChooser> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 _formKey.currentState.save();
                 final data =
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
-
+                realEmails.clear();
                 getActualEmails();
-                print("fuck");
-                print(realEmails);
+                List<String> res;
+                Future.delayed(Duration(seconds: 5), () {
+                  res = CalwinDatabase.fetchActualEmails();
+                });
+                print(res);
                 var curevent = <String, dynamic>{
                   'id': uuid.v4(),
                   'title': data['title'],
                   'description': data['description'],
                   'startTime': _startDateTime,
                   'endTime': _finishDateTime,
-                  'attendeeEmail': realEmails
+                  'attendeeEmail': res
                 };
                 CalwinDatabase.addEvents(curevent, widget.user.uid);
                 Navigator.pop(context);

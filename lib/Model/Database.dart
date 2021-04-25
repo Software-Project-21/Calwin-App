@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:uuid/uuid.dart';
 
+List<String> realEmails = [];
 List<dynamic> events;
 var uuid = Uuid();
 
@@ -47,7 +48,8 @@ class CalwinDatabase {
       }
     });
   }
-  static List<dynamic> getListEvents(String userID){
+
+  static List<dynamic> getListEvents(String userID) {
     getEvents(userID);
     return events;
   }
@@ -118,24 +120,30 @@ class CalwinDatabase {
     await _db.collection('users').doc(userID).update({'events': events});
   }
 
-  static Future<String> checkEmail(String userEmail) async {
-    _db
+  static Future<void> checkEmail(String userEmail) async {
+    bool found = false;
+    var snapshot = await FirebaseFirestore.instance
         .collection("users")
         .where("email", isEqualTo: userEmail)
-        .snapshots()
-        .listen((event) {
-      var mail = event.docs.single.data()["email"];
-      print(mail);
-      return mail;
-      /*
-      var snapshot = await _db
-        .collection("users")
-        .where("email", isEqualTo: userEmail)
-        .get();
-    String ha = snapshot.docs.single.data()["email"];
-    return ha;
-    */
+        .snapshots();
+    snapshot.listen((event) {
+      if (event.docs.isNotEmpty) {
+        realEmails.add(userEmail);
+      }
     });
-    return "";
+/*
+    .listen((event) async {
+    print("fucked");
+    var mail = await event.docs.single.data()["email"];
+    print(mail);
+    });
+
+    print("  " + found.toString());
+    return found;
+    */
+  }
+
+  static List<String> fetchActualEmails() {
+    return realEmails;
   }
 }

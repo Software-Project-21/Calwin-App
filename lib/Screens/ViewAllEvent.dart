@@ -18,6 +18,7 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
   List<dynamic> _events = [];
   @override
   void initState() {
+    _events = CalwinDatabase.getListEvents(widget.user.uid);
     super.initState();
   }
   @override
@@ -76,7 +77,6 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
           Container(
             child: (_events == null) ? Container() : _buildEventList(),
           ),
-          //Column(children: _eventWidgets),
         ],
       ),
     );
@@ -84,7 +84,6 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
 
   Widget _buildEventList() {
     // print(_events);
-    _events = CalwinDatabase.getListEvents(widget.user.uid);
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: 400, minHeight: 56.0),
       child: ListView(
@@ -119,10 +118,10 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
           padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
           child: Column(
             children: [
-              Text(event['title'],
-                  style: Theme.of(context).primaryTextTheme.bodyText1),
-              Text(event['description'],
-                  style: Theme.of(context).primaryTextTheme.bodyText1),
+              Text(event['title']==null?"":event['title'],
+                  style: Theme.of(context).primaryTextTheme.bodyText2),
+              Text(event['description']==null?"":event['description'],
+                  style: Theme.of(context).primaryTextTheme.bodyText2),
             ],
           ),
         ),

@@ -390,9 +390,9 @@ class _CalenderScreenState extends State<CalenderScreen> {
           child: Column(
             children: [
               Text(event['title'],
-                  style: Theme.of(context).primaryTextTheme.bodyText1),
+                  style: Theme.of(context).primaryTextTheme.bodyText2),
               Text(event['description'],
-                  style: Theme.of(context).primaryTextTheme.bodyText1),
+                  style: Theme.of(context).primaryTextTheme.bodyText2),
             ],
           ),
         ),

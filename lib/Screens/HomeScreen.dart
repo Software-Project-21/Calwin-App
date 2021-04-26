@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:calwin/Screens/AllHolidayScreen.dart';
 import 'package:calwin/Screens/CalenderScreen.dart';
+import 'package:calwin/Screens/CheckInviteScreen.dart';
 import 'package:calwin/Screens/SettingsScreen.dart';
 import 'package:calwin/Screens/ViewAllEvent.dart';
 import 'package:calwin/Utils/theme.dart';
@@ -191,12 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 onPressed: () {
                                   Navigator.push(
-                                      context,
-                                      PageTransition(
-                                          type: PageTransitionType.fade,
-                                          duration: Duration(milliseconds: 300),
-                                          child: AllHolidayScreen(),
-                                      ),
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      duration: Duration(milliseconds: 300),
+                                      child: AllHolidayScreen(),
+                                    ),
                                   );
                                 },
                                 child: Column(
@@ -241,7 +242,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.fade,
+                                          duration: Duration(milliseconds: 300),
+                                          child: CheckInviteScreen(
+                                            user: widget.user,
+                                          )));
+                                },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,

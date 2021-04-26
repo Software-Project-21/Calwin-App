@@ -47,7 +47,6 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     'email': user.email,
                     'photoURL': user.photoURL,
                     'name': user.displayName,
-                    'invites': [],
                     // 'event': ''
                   };
                   // data['events'] = [];

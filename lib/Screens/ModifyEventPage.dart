@@ -210,7 +210,7 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
                 final data =
                 Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
-                realEmails.clear();
+                // realEmails.clear();
                 // getActualEmails();
                 // List<String> res;
                 // Future.delayed(Duration(seconds: 5), () {

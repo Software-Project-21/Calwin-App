@@ -27,7 +27,7 @@ class CalwinDatabase {
     await _db.collection('users').doc(user_id).update({
       'events': FieldValue.arrayUnion([
         {
-          'id': uuid.v4(),
+          'id': event['id'],
           'title': event['title'],
           'description': event['description'],
           'startTime': event['startTime'],
@@ -36,6 +36,16 @@ class CalwinDatabase {
         }
       ])
     });
+    event['admin'] = user_id;
+    event['acceptedUsers'] = [];
+    event['sharedWith'] = event['attendeeEmail'];
+    event.remove('attendeeEmail');
+    String eventID = event['id'];
+    event.remove('id');
+    await _db
+        .collection('events')
+        .doc(eventID)
+        .set(event, SetOptions(merge: true));
   }
 
   static Future<List<dynamic>> getEvents(String user_id) async {
@@ -153,16 +163,17 @@ class CalwinDatabase {
     }
   }
 
-  static Future<void> fetchInvites(String userID) async {
+  static Future<List<dynamic>> fetchInvites(String userID) async {
     await _db.collection('users').doc(userID).get().then((value) {
       {
         invitations = value.data()['invitations'];
+        return invitations;
       }
     });
   }
 
   static Future<void> getInviteInfo(String userID) async {
-    await fetchInvites(userID);
+    fetchInvites(userID);
     for (int i = 0; i < invitations.length; i++) {
       await _db
           .collection('events')
@@ -170,17 +181,15 @@ class CalwinDatabase {
           .get()
           .then((value) {
         {
-          inviteInfo.add(value.data());
+          if (!inviteInfo.contains(value.data())) inviteInfo.add(value.data());
         }
       });
     }
+    //print(invitations);
   }
 
   static List<dynamic> getListInvites(String userID) {
     getInviteInfo(userID);
-    print(invitations);
-    print("pyo");
-    print(inviteInfo);
     return (inviteInfo == []) ? null : inviteInfo;
   }
 }

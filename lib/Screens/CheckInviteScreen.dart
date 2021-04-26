@@ -8,8 +8,10 @@ import 'package:provider/provider.dart';
 
 class CheckInviteScreen extends StatefulWidget {
   final User user;
+  static double allowed;
 
   const CheckInviteScreen({Key key, this.user}) : super(key: key);
+
   @override
   _CheckInviteScreenState createState() => _CheckInviteScreenState();
 }
@@ -23,6 +25,11 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
   }
 
   Widget build(BuildContext context) {
+    final availableHeight = MediaQuery.of(context).size.height -
+        AppBar().preferredSize.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
+    CheckInviteScreen.allowed = availableHeight;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: ListView(
@@ -87,7 +94,8 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
   Widget _buildInvitesList() {
     _invites = CalwinDatabase.getListInvites(widget.user.uid);
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: 400, minHeight: 56.0),
+      constraints: BoxConstraints(
+          maxHeight: 0.95 * CheckInviteScreen.allowed, minHeight: 56.0),
       child: ListView(
         children: _invites
             .map((invite) => Container(

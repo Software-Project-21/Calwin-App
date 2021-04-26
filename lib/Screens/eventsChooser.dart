@@ -41,10 +41,8 @@ class _eventsChooserState extends State<eventsChooser> {
     if (emails == null) return;
     for (int i = 0; i < emails.length; i++) {
       var mail = await CalwinDatabase.checkEmail(emails[i]);
-      if (mail) {
+      if (mail && emails[i] != widget.user.email) {
         realEmails.add(emails[i]);
-        print("gud");
-        print(emails[i]);
       }
     }
   }
@@ -220,8 +218,8 @@ class _eventsChooserState extends State<eventsChooser> {
                 final data =
                     Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
-                await getActualEmails();
                 realEmails.clear();
+                await getActualEmails();
                 var curevent = <String, dynamic>{
                   'id': uuid.v4(),
                   'title': data['title'],

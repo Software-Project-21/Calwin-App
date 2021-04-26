@@ -47,10 +47,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     'email': user.email,
                     'photoURL': user.photoURL,
                     'name': user.displayName,
-                    'invitations': []
-                    // 'event': ''
                   };
-                  // data['events'] = [];
                   CalwinDatabase.addUser(curuser, user.uid);
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(

@@ -27,7 +27,7 @@ class CalwinDatabase {
     await _db.collection('users').doc(user_id).update({
       'events': FieldValue.arrayUnion([
         {
-          'id': uuid.v4(),
+          'id': event['id'],
           'title': event['title'],
           'description': event['description'],
           'startTime': event['startTime'],

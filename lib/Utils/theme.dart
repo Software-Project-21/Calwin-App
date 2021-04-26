@@ -26,7 +26,7 @@ ThemeData light = ThemeData(
 
 ThemeData dark = ThemeData(
     primaryColor: kDark,
-    accentColor: Color.fromRGBO(200, 200, 200, 1),
+    accentColor: Colors.white,
     dividerColor: Color.fromRGBO(200, 200, 200, 0.1),
     primaryTextTheme: TextTheme(
       // Section Headings

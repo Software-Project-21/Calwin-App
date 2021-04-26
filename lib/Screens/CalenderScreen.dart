@@ -5,10 +5,12 @@ import 'package:calwin/Utils/Authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:calwin/Utils/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'ModifyEventPage.dart';
 import 'holidays.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../Model/HolidayModel.dart';
@@ -390,7 +392,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
           child: Column(
             children: [
               Text(event['title'],
-                  style: Theme.of(context).primaryTextTheme.bodyText2),
+                  style: Theme.of(context).primaryTextTheme.bodyText1),
               Text(event['description'],
                   style: Theme.of(context).primaryTextTheme.bodyText2),
             ],
@@ -398,25 +400,22 @@ class _CalenderScreenState extends State<CalenderScreen> {
         ),
         Row(children: [
           IconButton(
-              icon: Icon(FontAwesomeIcons.edit),
+              icon: Icon(FontAwesomeIcons.edit, color:  Theme.of(context).accentColor,),
               onPressed: () {
-                // TODO:
+                CalwinDatabase.deleteEvent(event['id'], widget._user.uid);
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.fade,
+                        duration: Duration(milliseconds: 300),
+                        child: ModifyEventScreen(
+                          user: widget._user,
+                          event: event,
+                        )));
               }),
           IconButton(
-              icon: Icon(Icons.delete_rounded),
+              icon: Icon(Icons.delete_rounded,color:  Theme.of(context).accentColor),
               onPressed: () {
-                // DateTime eventDate = _calendarController.selectedDay;
-                // DateTime onlyDate = DateTime(eventDate.year, eventDate.month, eventDate.day);
-                // for (int i = 0; i < _events[onlyDate].length; i++) {
-                //   var cc = _events[onlyDate][i];
-                //   if(cc['id']== event['id']){
-                //     setState(() {
-                //       _events[onlyDate].removeAt(i);
-                //     });
-                //     break;
-                //   }
-                // }
-
                 CalwinDatabase.deleteEvent(event['id'], _user.uid);
                 setState(() {
                   _events = CalwinDatabase.getAllEvents(_user.uid);

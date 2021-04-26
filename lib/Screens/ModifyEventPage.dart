@@ -9,18 +9,17 @@ import 'package:provider/provider.dart';
 
 List<String> emails = [];
 
-class eventsChooser extends StatefulWidget {
+class ModifyEventScreen extends StatefulWidget {
   final User user;
-  //final CalwinEvent event;
+  final Map<String, dynamic> event;
 
-  const eventsChooser({Key key, this.user}) : super(key: key);
+  const ModifyEventScreen({Key key, this.user, this.event}) : super(key: key);
 
-  _eventsChooserState createState() => _eventsChooserState();
+  _ModifyEventScreenState createState() => _ModifyEventScreenState();
 }
 
-var uuid = Uuid();
 
-class _eventsChooserState extends State<eventsChooser> {
+class _ModifyEventScreenState extends State<ModifyEventScreen> {
   List<String> _emails;
   final _formKey = GlobalKey<FormBuilderState>();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -31,9 +30,12 @@ class _eventsChooserState extends State<eventsChooser> {
   int len;
   @override
   void initState() {
-    // TODO: implement initState
-    print(len);
     emails.clear();
+    // emails = widget.event['attendeeEmail'];
+    _textEditingController1.text = widget.event['startTime'].toDate().toString();
+    _textEditingController2.text = widget.event['endTime'].toDate().toString();
+    _startDateTime = widget.event['startTime'].toDate();
+    _finishDateTime = widget.event['endTime'].toDate();
     super.initState();
   }
 
@@ -53,10 +55,10 @@ class _eventsChooserState extends State<eventsChooser> {
                   builder: (context, notifier, child) => IconButton(
                       icon: notifier.isDarkTheme
                           ? Icon(
-                              Icons.arrow_back_ios,
-                              size: 20,
-                              color: Colors.white,
-                            )
+                        Icons.arrow_back_ios,
+                        size: 20,
+                        color: Colors.white,
+                      )
                           : Icon(Icons.arrow_back_ios),
                       onPressed: () async {
                         Navigator.pop(context);
@@ -64,11 +66,11 @@ class _eventsChooserState extends State<eventsChooser> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Text("Add Event",
+                  child: Text("Modify Event",
                       style: Theme.of(context).primaryTextTheme.headline1),
                 ),
                 SizedBox(
-                  width: 30,
+                  width: 40,
                 ),
               ],
             ),
@@ -82,7 +84,7 @@ class _eventsChooserState extends State<eventsChooser> {
                   FormBuilderTextField(
                     name: "title",
                     style: Theme.of(context).primaryTextTheme.bodyText2,
-                    // initialValue: widget.event?.title,
+                    initialValue: widget.event['title'],
                     decoration: InputDecoration(
                       labelText: 'Title',
                       labelStyle: Theme.of(context).accentTextTheme.bodyText1,
@@ -104,12 +106,12 @@ class _eventsChooserState extends State<eventsChooser> {
                   FormBuilderTextField(
                     name: "description",
                     style: Theme.of(context).primaryTextTheme.bodyText2,
-                    // initialValue: widget.event?.description,
+                    initialValue: widget.event['description'],
                     minLines: 1,
                     maxLines: 5,
                     decoration: InputDecoration(
                       labelText: 'Description',
-                      labelStyle: Theme.of(context).accentTextTheme.bodyText1,
+                      labelStyle: Theme.of(context).primaryTextTheme.bodyText2,
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: kRed,
@@ -132,8 +134,11 @@ class _eventsChooserState extends State<eventsChooser> {
                         controller: _textEditingController1,
                         style: Theme.of(context).primaryTextTheme.bodyText2,
                         decoration: InputDecoration(
-                            labelText: 'Start Date and Time',
-                            labelStyle: Theme.of(context).accentTextTheme.bodyText1,
+                            hintText: 'Event Start Date & Time',
+                            labelStyle:
+                            Theme.of(context).primaryTextTheme.bodyText2,
+                            hintStyle:
+                            Theme.of(context).accentTextTheme.bodyText1,
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: kRed,
@@ -157,8 +162,9 @@ class _eventsChooserState extends State<eventsChooser> {
                         style: Theme.of(context).primaryTextTheme.bodyText2,
                         controller: _textEditingController2,
                         decoration: InputDecoration(
-                            labelText: 'End Date and Time',
-                            labelStyle: Theme.of(context).accentTextTheme.bodyText1,
+                            hintText: 'Event Finish Date & Time',
+                            hintStyle:
+                            Theme.of(context).accentTextTheme.bodyText1,
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: kRed,
@@ -186,13 +192,13 @@ class _eventsChooserState extends State<eventsChooser> {
             child: ElevatedButton(
               style: ButtonStyle(
                 minimumSize: MaterialStateProperty.resolveWith<Size>(
-                  (Set<MaterialState> states) {
+                      (Set<MaterialState> states) {
                     if (states.contains(MaterialState.pressed)) Size(50, 50);
                     return Size(50, 40);
                   },
                 ),
                 backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
+                      (Set<MaterialState> states) {
                     if (states.contains(MaterialState.pressed))
                       return Colors.lightBlueAccent;
                     return kRed; // Use the component's default.
@@ -202,7 +208,7 @@ class _eventsChooserState extends State<eventsChooser> {
               onPressed: () async {
                 _formKey.currentState.save();
                 final data =
-                    Map<String, dynamic>.from(_formKey.currentState.value);
+                Map<String, dynamic>.from(_formKey.currentState.value);
                 data["date"] = _selectedDate;
                 realEmails.clear();
                 // getActualEmails();
@@ -212,7 +218,7 @@ class _eventsChooserState extends State<eventsChooser> {
                 // });
                 // print(res);
                 var curevent = <String, dynamic>{
-                  'id': uuid.v4(),
+                  'id': widget.event['id'],
                   'title': data['title'],
                   'description': data['description'],
                   'startTime': _startDateTime,
@@ -327,20 +333,20 @@ class _EmailInputState extends State<EmailInput> {
   Widget build(BuildContext context) {
     return Container(
         child: Column(
-      children: <Widget>[
-        Container(
-          // padding: EdgeInsets.only(left: 100),
-          alignment: Alignment.centerLeft,
-          constraints: BoxConstraints(
-            minWidth: 0,
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              children: <Widget>[
-                ...emails
-                    .map(
-                      (email) => Chip(
+          children: <Widget>[
+            Container(
+              // padding: EdgeInsets.only(left: 100),
+              alignment: Alignment.centerLeft,
+              constraints: BoxConstraints(
+                minWidth: 0,
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  children: <Widget>[
+                    ...emails
+                        .map(
+                          (email) => Chip(
                         avatar: CircleAvatar(
                           backgroundColor: Colors.black,
                           child: Text(
@@ -361,52 +367,52 @@ class _EmailInputState extends State<EmailInput> {
                         },
                       ),
                     )
-                    .toList(),
-              ],
-            ),
-          ),
-        ),
-        TextField(
-          style: Theme.of(context).primaryTextTheme.bodyText2,
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            hintStyle: Theme.of(context).accentTextTheme.bodyText1,
-            hintText: widget.hint,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: kRed,
+                        .toList(),
+                  ],
+                ),
               ),
-              borderRadius: BorderRadius.circular(10.0),
             ),
-            prefixIcon: Icon(
-              CupertinoIcons.person_3_fill,
-              color: Theme.of(context).accentColor,
-            ),
-          ),
-          controller: _emailController,
-          focusNode: focus,
-          onChanged: (String val) {
-            setState(() {
-              if (val != lastValue) {
-                lastValue = val;
-                if (val.endsWith(' ') && validateEmail(val.trim())) {
-                  if (!emails.contains(val.trim())) {
-                    emails.add(val.trim());
-                    widget.setList(emails);
+            TextField(
+              style: Theme.of(context).primaryTextTheme.bodyText2,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintStyle: Theme.of(context).accentTextTheme.bodyText1,
+                hintText: widget.hint,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: kRed,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: Icon(
+                  CupertinoIcons.person_3_fill,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+              controller: _emailController,
+              focusNode: focus,
+              onChanged: (String val) {
+                setState(() {
+                  if (val != lastValue) {
+                    lastValue = val;
+                    if (val.endsWith(' ') && validateEmail(val.trim())) {
+                      if (!emails.contains(val.trim())) {
+                        emails.add(val.trim());
+                        widget.setList(emails);
+                      }
+                      _emailController.clear();
+                    } else if (val.endsWith(' ') && !validateEmail(val.trim())) {
+                      _emailController.clear();
+                    }
                   }
-                  _emailController.clear();
-                } else if (val.endsWith(' ') && !validateEmail(val.trim())) {
-                  _emailController.clear();
-                }
-              }
-            });
-          },
-          onEditingComplete: () {
-            updateEmails();
-          },
-        )
-      ],
-    ));
+                });
+              },
+              onEditingComplete: () {
+                updateEmails();
+              },
+            )
+          ],
+        ));
   }
 
   updateEmails() {

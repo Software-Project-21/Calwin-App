@@ -39,7 +39,8 @@ class HolidayModel {
       nameDecsDate = subHolidays[i];
       allHolidays.add({
         'name': nameDecsDate.name,
-        'desc': nameDecsDate.desc
+        'desc': nameDecsDate.desc,
+        'dt'  : nameDecsDate.dt,
       });
       DateTime formattedDate = DateTime.parse(DateFormat('yyyy-MM-dd')
           .format(DateTime.parse(nameDecsDate.dt.toString())));

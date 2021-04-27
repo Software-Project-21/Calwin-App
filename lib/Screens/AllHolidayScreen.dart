@@ -16,6 +16,7 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,10 +32,10 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
                   builder: (context, notifier, child) => IconButton(
                       icon: notifier.isDarkTheme
                           ? Icon(
-                        Icons.arrow_back_ios,
-                        size: 20,
-                        color: Colors.white,
-                      )
+                              Icons.arrow_back_ios,
+                              size: 20,
+                              color: Colors.white,
+                            )
                           : Icon(Icons.arrow_back_ios),
                       onPressed: () async {
                         Navigator.pop(context);
@@ -45,23 +46,8 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
                   child: Text("Holidays",
                       style: Theme.of(context).primaryTextTheme.headline1),
                 ),
-                Row(
-                  children: [
-                    Consumer<ThemeNotifier>(
-                        builder: (context, notifier, child) => IconButton(
-                            icon: notifier.isDarkTheme
-                                ? FaIcon(
-                              Icons.refresh,
-                              size: 25,
-                              color: Colors.white,
-                            )
-                                : Icon(Icons.refresh, size: 25),
-                            onPressed: () {
-                              setState(() {
-                                // _buildEventList();
-                              });
-                            })),
-                  ],
+                SizedBox(
+                  width: 40,
                 ),
               ],
             ),
@@ -78,28 +64,49 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
   }
 
   Widget _buildHolidayList() {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: 700, minHeight: 56.0),
-      child: ListView(
-        children: allHolidays
-            .map((event) => Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: kRed,
-            borderRadius: BorderRadius.circular(6),
-            // gradient:
-            // LinearGradient(colors: [Colors.red[500],Colors.red[400],Colors.red[400],Colors.deepPurple]),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 5,
-                  offset: new Offset(0.0, 5))
+    return Container(
+      height: 700,
+      child: ShaderMask(
+        shaderCallback: (Rect rect) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.purple,
+              Colors.transparent,
+              Colors.transparent,
+              Colors.purple
             ],
-          ),
-          child: singleTile(event),
-        ))
-            .toList(),
+            stops: [
+              0.0,
+              0.02,
+              0.98,
+              1.0
+            ], // 10% purple, 80% transparent, 10% purple
+          ).createShader(rect);
+        },
+        blendMode: BlendMode.dstOut,
+        child: ListView(
+          children: allHolidays
+              .map((event) => Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: kRed,
+                      borderRadius: BorderRadius.circular(6),
+                      // gradient:
+                      // LinearGradient(colors: [Colors.red[500],Colors.red[400],Colors.red[400],Colors.deepPurple]),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 5,
+                            offset: new Offset(0.0, 5))
+                      ],
+                    ),
+                    child: singleTile(event),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }
@@ -113,27 +120,37 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
           child: Column(
             children: [
               Container(
-                width: 300.0,
-                height: 40.0,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Text(event['name'],
-                      style: Theme.of(context).primaryTextTheme.bodyText1),
+                width: 315,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 200,
+                      child: Text(event['name'],
+                          style: Theme.of(context).primaryTextTheme.headline2),
+                    ),
+                    Text(
+                      getDate(event['dt']),
+                      style: Theme.of(context).primaryTextTheme.bodyText1,
+                    )
+                  ],
                 ),
               ),
+              Divider(),
               Container(
                 width: 300.0,
-                height: 40.0,
-                child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Text(event['desc'],
-                        style: Theme.of(context).primaryTextTheme.bodyText1),
-                ),
+                child: Text(event['desc'],
+                    style: Theme.of(context).accentTextTheme.bodyText1),
               ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  String getDate(String date) {
+    String newDate = date.substring(0, 10);
+    return newDate;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:calwin/Utils/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -243,7 +245,7 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
     DateTime pickedDate = await showModalBottomSheet<DateTime>(
       context: context,
       builder: (context) {
-        DateTime tempPickedDate;
+        DateTime tempPickedDate = DateTime.now();
         return Container(
           height: 250,
           child: Column(
@@ -289,11 +291,11 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         if (a == 0) {
-          _startDateTime = pickedDate;
-          _textEditingController1.text = pickedDate.toString();
+          _startDateTime = DateTime(pickedDate.year,pickedDate.month,pickedDate.day,pickedDate.hour,pickedDate.minute);
+          _textEditingController1.text = _startDateTime.toString().substring(0,16);
         } else {
-          _finishDateTime = pickedDate;
-          _textEditingController2.text = pickedDate.toString();
+          _finishDateTime = DateTime(pickedDate.year,pickedDate.month,pickedDate.day,pickedDate.hour,pickedDate.minute);
+          _textEditingController2.text = _finishDateTime.toString().substring(0,16);
         }
         _selectedDate = pickedDate;
       });

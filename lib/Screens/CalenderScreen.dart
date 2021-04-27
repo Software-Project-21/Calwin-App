@@ -22,31 +22,11 @@ class CalenderScreen extends StatefulWidget {
         super(key: key);
 
   final User _user;
-
   @override
   _CalenderScreenState createState() => _CalenderScreenState();
 }
 
 class _CalenderScreenState extends State<CalenderScreen> {
-  Route _routeToSignInScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
   User _user;
   bool _isSigningOut = false;
   Future<HolidayModel> futureHoliday;
@@ -54,9 +34,6 @@ class _CalenderScreenState extends State<CalenderScreen> {
   CalendarController _calendarController;
   Map<DateTime, List<dynamic>> _events = {};
   List<dynamic> _selectedEvents = [];
-  List<dynamic> _holidays = [];
-  //List<Widget> get _eventWidgets =>
-  //  _selectedEvents.map((e) => events(e)).toList();
   String dateDes;
 
   @override
@@ -166,7 +143,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => eventsChooser(user: widget._user),
+              builder: (context) => eventsChooser(user: widget._user, selectedDayPassed: _selectedDay,),
             ),
           );
           setState(() {
@@ -333,6 +310,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
         ),
         onDaySelected: (date, events, holidays) {
           _onDaySelected(context, date);
+          _selectedDay = date;
         },
         calendarController: _calendarController,
         startingDayOfWeek: StartingDayOfWeek.monday,
@@ -384,46 +362,55 @@ class _CalenderScreenState extends State<CalenderScreen> {
   }
 
   Widget singleTile(Map<String, dynamic> event) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
-          child: Column(
+    return Padding(
+      padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(event['title'],
+              Container(
+                width: MediaQuery.of(context).size.width*0.6,
+                child: Text(event['title'],
                   style: Theme.of(context).primaryTextTheme.bodyText1),
-              Text(event['description'],
-                  style: Theme.of(context).primaryTextTheme.bodyText2),
+              ),
+              SizedBox(width: 10,),
+              Row(children: [
+                IconButton(
+                    icon: Icon(FontAwesomeIcons.edit, color:  Theme.of(context).accentColor,),
+                    onPressed: () {
+                      CalwinDatabase.deleteEvent(event['id'], widget._user.uid);
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              duration: Duration(milliseconds: 300),
+                              child: ModifyEventScreen(
+                                user: widget._user,
+                                event: event,
+                              )));
+                    }),
+                IconButton(
+                    icon: Icon(Icons.delete_rounded,color:  Theme.of(context).accentColor),
+                    onPressed: () {
+                      CalwinDatabase.deleteEvent(event['id'], _user.uid);
+                      setState(() {
+                        _events = CalwinDatabase.getAllEvents(_user.uid);
+                        // _calendarController.dispose()
+                      });
+                    }),
+              ]),
             ],
           ),
-        ),
-        Row(children: [
-          IconButton(
-              icon: Icon(FontAwesomeIcons.edit, color:  Theme.of(context).accentColor,),
-              onPressed: () {
-                CalwinDatabase.deleteEvent(event['id'], widget._user.uid);
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.fade,
-                        duration: Duration(milliseconds: 300),
-                        child: ModifyEventScreen(
-                          user: widget._user,
-                          event: event,
-                        )));
-              }),
-          IconButton(
-              icon: Icon(Icons.delete_rounded,color:  Theme.of(context).accentColor),
-              onPressed: () {
-                CalwinDatabase.deleteEvent(event['id'], _user.uid);
-                setState(() {
-                  _events = CalwinDatabase.getAllEvents(_user.uid);
-                  // _calendarController.dispose()
-                });
-              }),
-        ]),
-      ],
+          Container(
+            width: MediaQuery.of(context).size.width*0.85,
+            child: Text(event['description'],
+                style: Theme.of(context).primaryTextTheme.bodyText2),
+          ),
+        ],
+      ),
     );
   }
 }

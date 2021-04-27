@@ -12,9 +12,9 @@ List<String> realEmails = [];
 
 class eventsChooser extends StatefulWidget {
   final User user;
-  //final CalwinEvent event;
+  final DateTime selectedDayPassed;
 
-  const eventsChooser({Key key, this.user}) : super(key: key);
+  const eventsChooser({Key key, this.user, this.selectedDayPassed}) : super(key: key);
 
   _eventsChooserState createState() => _eventsChooserState();
 }
@@ -31,9 +31,16 @@ class _eventsChooserState extends State<eventsChooser> {
   DateTime _startDateTime, _finishDateTime;
   @override
   void initState() {
-    // TODO: implement initState
     realEmails.clear();
     emails.clear();
+    if(widget.selectedDayPassed!=null){
+      DateTime temp =  widget.selectedDayPassed;
+      _startDateTime = DateTime(temp.year,temp.month,temp.day);
+      _finishDateTime = temp;
+      _textEditingController1.text = temp.toString().substring(0,16);
+      _textEditingController2.text = temp.toString().substring(0,16);
+    }
+
     super.initState();
   }
 
@@ -245,23 +252,24 @@ class _eventsChooserState extends State<eventsChooser> {
     DateTime pickedDate = await showModalBottomSheet<DateTime>(
       context: context,
       builder: (context) {
-        DateTime tempPickedDate;
+        DateTime tempPickedDate = DateTime.now();
         return Container(
           height: 250,
           child: Column(
             children: <Widget>[
               Container(
+                color: Theme.of(context).primaryColor,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     CupertinoButton(
-                      child: Text('Cancel'),
+                      child: Text('Cancel',style: TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold)),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     CupertinoButton(
-                      child: Text('Done'),
+                      child: Text('Done', style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),),
                       onPressed: () {
                         Navigator.of(context).pop(tempPickedDate);
                       },
@@ -275,11 +283,17 @@ class _eventsChooserState extends State<eventsChooser> {
               ),
               Expanded(
                 child: Container(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    onDateTimeChanged: (DateTime dateTime) {
-                      tempPickedDate = dateTime;
-                    },
+                  child: CupertinoTheme(
+                    data: CupertinoThemeData(
+                      brightness: Theme.of(context).brightness,
+                    ),
+                    child: CupertinoDatePicker(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      mode: CupertinoDatePickerMode.dateAndTime,
+                      onDateTimeChanged: (DateTime dateTime) {
+                        tempPickedDate = dateTime;
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -291,11 +305,11 @@ class _eventsChooserState extends State<eventsChooser> {
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         if (a == 0) {
-          _startDateTime = pickedDate;
-          _textEditingController1.text = pickedDate.toString();
+          _startDateTime = DateTime(pickedDate.year,pickedDate.month,pickedDate.day,pickedDate.hour,pickedDate.minute);
+          _textEditingController1.text = pickedDate.toString().substring(0,16);
         } else {
-          _finishDateTime = pickedDate;
-          _textEditingController2.text = pickedDate.toString();
+          _finishDateTime = DateTime(pickedDate.year,pickedDate.month,pickedDate.day,pickedDate.hour,pickedDate.minute);
+          _textEditingController2.text = pickedDate.toString().substring(0,16);
         }
         _selectedDate = pickedDate;
       });

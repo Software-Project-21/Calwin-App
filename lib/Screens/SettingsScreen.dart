@@ -27,8 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         var end = Offset.zero;
         var curve = Curves.ease;
 
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         return SlideTransition(
           position: animation.drive(tween),
           child: child,
@@ -48,10 +47,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         color: Theme
             .of(context)
             .primaryColor,
-        padding: EdgeInsets.only(top: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
+            SizedBox(height: MediaQuery.of(context).size.width*0.1,),
             Center(
               child: Column(
                 children: [
@@ -61,37 +59,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                   SizedBox(height: 10,),
                   Text(widget.user.displayName,style: Theme.of(context).primaryTextTheme.headline2,),
-                  Text(widget.user.email,style: Theme.of(context).primaryTextTheme.bodyText1,),
+                  Text(widget.user.email,style: Theme.of(context).primaryTextTheme.bodyText2,),
                 ],
               ),
             ),
-            SizedBox(height: 20,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Consumer<ThemeNotifier>(
-                  builder: (context, notifier, child) => ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.resolveWith<double>(
-                              (Set<MaterialState> states){
-                            return 0.0;
-                          }
+            SizedBox(height: MediaQuery.of(context).size.width*0.1,),
+            Padding(
+              padding: const EdgeInsets.only(left: 15,right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Consumer<ThemeNotifier>(
+                    builder: (context, notifier, child) => ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.resolveWith<double>(
+                                (Set<MaterialState> states){
+                                  if (states.contains(MaterialState.pressed))
+                                    return 0;
+                                  return 3;
+                                }
+                        ),
+                        backgroundColor:
+                        MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return Theme.of(context).primaryColor;
+                            return Theme.of(context).primaryColor; // Use the component's default.
+                          },
+                        ),
                       ),
-                      backgroundColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.pressed))
-                            return Theme.of(context).primaryColor;
-                          return Theme.of(context).primaryColor; // Use the component's default.
-                        },
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 30,right: 50),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Theme ',style: Theme.of(context).primaryTextTheme.bodyText1),
+                          SizedBox(
+                            height: 50,
+                              child: Center(child: Text('Theme ',style: Theme.of(context).primaryTextTheme.bodyText1))),
                           notifier.isDarkTheme
                               ? FaIcon(
                             FontAwesomeIcons.moon,
@@ -107,33 +109,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 : Colors.black54,),
                         ],
                       ),
+                      onPressed: () => {notifier.toggleTheme()},
                     ),
-                    onPressed: () => {notifier.toggleTheme()},
                   ),
-                ),
-                Consumer<ThemeNotifier>(
-                  builder: (context, notifier, child) => ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.resolveWith<double>(
-                              (Set<MaterialState> states){
-                            return 0.0;
-                          }
+                  Divider(color: Color(0xff00000)),
+                  Consumer<ThemeNotifier>(
+                    builder: (context, notifier, child) => ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.resolveWith<double>(
+                                (Set<MaterialState> states){
+                              if (states.contains(MaterialState.pressed))
+                                return 0;
+                              return 3;
+                            }
+                        ),
+                        backgroundColor:
+                        MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return Theme.of(context).primaryColor;
+                            return Theme.of(context).primaryColor; // Use the component's default.
+                          },
+                        ),
                       ),
-                      backgroundColor:
-                      MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.pressed))
-                            return Theme.of(context).primaryColor;
-                          return Theme.of(context).primaryColor; // Use the component's default.
-                        },
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 30,right: 50),
                       child: Row(
+
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Sign Out ',style: Theme.of(context).primaryTextTheme.bodyText1),
+                          SizedBox(
+                            height: 50,
+                              child: Center(child: Text('Sign Out ',style: Theme.of(context).primaryTextTheme.bodyText1))),
                           notifier.isDarkTheme
                               ? Icon(
                             Icons.exit_to_app_rounded,
@@ -148,21 +153,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 : Colors.black54,),
                         ],
                       ),
+                      onPressed: () async {
+                        setState(() {
+                          _isSigningOut = true;
+                        });
+                        await Authentication.signOut(context: context);
+                        setState(() {
+                          _isSigningOut = false;
+                        });
+                        Navigator.of(context)
+                            .pushReplacement(_routeToSignInScreen());
+                      },
                     ),
-                    onPressed: () async {
-                      setState(() {
-                        _isSigningOut = true;
-                      });
-                      await Authentication.signOut(context: context);
-                      setState(() {
-                        _isSigningOut = false;
-                      });
-                      Navigator.of(context)
-                          .pushReplacement(_routeToSignInScreen());
-                    },
                   ),
-                ),
-              ],
+                  Divider(
+                    color: Color(0xff00000),
+                  ),
+                  Consumer<ThemeNotifier>(
+                    builder: (context, notifier, child) => ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.resolveWith<double>(
+                                (Set<MaterialState> states){
+                              if (states.contains(MaterialState.pressed))
+                                return 0;
+                              return 3;
+                            }
+                        ),
+                        backgroundColor:
+                        MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return Theme.of(context).primaryColor;
+                            return Theme.of(context).primaryColor; // Use the component's default.
+                          },
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            height: 50,
+                              child: Center(child: Text('Contact Us',style: Theme.of(context).primaryTextTheme.bodyText1))),
+                          notifier.isDarkTheme
+                              ? FaIcon(
+                            FontAwesomeIcons.walking,
+                            size: 20,
+                            color: notifier.isDarkTheme
+                                ? Colors.white
+                                : Colors.black54,
+                          )
+                              : FaIcon(
+                            FontAwesomeIcons.walking,
+                            size: 20,
+                            color: notifier.isDarkTheme
+                                ? Colors.white
+                                : Colors.black54,),
+                        ],
+                      ),
+                      onPressed: () => {
+
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

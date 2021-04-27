@@ -121,47 +121,58 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
   }
 
   Widget singleTile(Map<String, dynamic> event) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
-          child: Column(
-            children: [
-              Text(event['title'] == null ? "" : event['title'],
+    return Padding(
+      padding: EdgeInsets.only(left: 20, top: 15, bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:[
+              Container(
+                width: MediaQuery.of(context).size.width*0.6,
+                child: Text(event['title'] == null ? "" : event['title'],
                   style: Theme.of(context).primaryTextTheme.bodyText1),
-              Text(event['description'] == null ? "" : event['description'],
-                  style: Theme.of(context).primaryTextTheme.bodyText2),
+              ),
+              SizedBox(width: 10,),
+              Row(
+                  children: [
+                IconButton(
+                    icon: Icon(FontAwesomeIcons.edit,
+                        color: Theme.of(context).accentColor),
+                    onPressed: () {
+                      CalwinDatabase.deleteEvent(event['id'], widget.user.uid);
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              duration: Duration(milliseconds: 300),
+                              child: ModifyEventScreen(
+                                user: widget.user,
+                                event: event,
+                              )));
+                    }),
+                IconButton(
+                    icon: Icon(Icons.delete_rounded,
+                        color: Theme.of(context).accentColor),
+                    onPressed: () async {
+                      CalwinDatabase.deleteEvent(event['id'], widget.user.uid);
+                      setState(() {
+                        _events = CalwinDatabase.getListEvents(widget.user.uid);
+                      });
+                    }),
+              ]),
             ],
           ),
-        ),
-        Row(children: [
-          IconButton(
-              icon: Icon(FontAwesomeIcons.edit,
-                  color: Theme.of(context).accentColor),
-              onPressed: () {
-                CalwinDatabase.deleteEvent(event['id'], widget.user.uid);
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.fade,
-                        duration: Duration(milliseconds: 300),
-                        child: ModifyEventScreen(
-                          user: widget.user,
-                          event: event,
-                        )));
-              }),
-          IconButton(
-              icon: Icon(Icons.delete_rounded,
-                  color: Theme.of(context).accentColor),
-              onPressed: () async {
-                CalwinDatabase.deleteEvent(event['id'], widget.user.uid);
-                setState(() {
-                  _events = CalwinDatabase.getListEvents(widget.user.uid);
-                });
-              }),
-        ]),
-      ],
+          Divider(),
+          Container(
+            width: MediaQuery.of(context).size.width*0.85,
+            child: Text(event['description'] == null ? "" : event['description'],
+                style: Theme.of(context).primaryTextTheme.bodyText2),
+          ),
+        ],
+      ),
     );
   }
 }

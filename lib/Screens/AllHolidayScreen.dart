@@ -123,9 +123,10 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
                 width: 315,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 200,
+                      width: MediaQuery.of(context).size.width*0.5,
                       child: Text(event['name'],
                           style: Theme.of(context).primaryTextTheme.headline2),
                     ),
@@ -138,7 +139,7 @@ class _AllHolidayScreenState extends State<AllHolidayScreen> {
               ),
               Divider(),
               Container(
-                width: 300.0,
+                width: MediaQuery.of(context).size.width*0.85,
                 child: Text(event['desc'],
                     style: Theme.of(context).accentTextTheme.bodyText1),
               ),

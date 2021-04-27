@@ -1,10 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.calwin">
-<<<<<<< HEAD
     <application
-=======
-   <application
->>>>>>> 527e19ad139ee6fa030b38678484705df8139cd6
         android:label="calwin"
         android:icon="@mipmap/ic_launcher">
         <activity

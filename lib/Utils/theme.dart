@@ -7,6 +7,7 @@ Color kRed = Color(0xfff05454);
 Color kGrey = Color(0xff30475e);
 Color kDark = Color(0xff222831);
 ThemeData light = ThemeData(
+  brightness: Brightness.light,
   primaryColor: kLight,
   accentColor: Color.fromRGBO(50, 50, 50, 1.0),
   primaryTextTheme: TextTheme(
@@ -16,7 +17,7 @@ ThemeData light = ThemeData(
     headline2: GoogleFonts.montserrat(
         color: kGrey, fontSize: 22, fontWeight: FontWeight.bold),
     // List Font
-    bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 20),
+    bodyText1: GoogleFonts.montserrat(color: kGrey, fontSize: 20,fontWeight: FontWeight.bold),
     bodyText2: GoogleFonts.montserrat(color: kGrey, fontSize: 16),
   ),
   accentTextTheme: TextTheme(
@@ -25,6 +26,7 @@ ThemeData light = ThemeData(
 );
 
 ThemeData dark = ThemeData(
+    brightness: Brightness.dark,
     primaryColor: kDark,
     accentColor: Colors.white,
     dividerColor: Color.fromRGBO(200, 200, 200, 0.1),
@@ -35,7 +37,7 @@ ThemeData dark = ThemeData(
       headline2: GoogleFonts.montserrat(
           color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
       // List Font
-      bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 20),
+      bodyText1: GoogleFonts.montserrat(color: Colors.white, fontSize: 20,fontWeight: FontWeight.bold),
       bodyText2: GoogleFonts.montserrat(color: Colors.white, fontSize: 16),
     ),
     accentTextTheme: TextTheme(

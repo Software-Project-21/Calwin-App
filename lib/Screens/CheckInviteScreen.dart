@@ -18,7 +18,7 @@ class CheckInviteScreen extends StatefulWidget {
 
 class _CheckInviteScreenState extends State<CheckInviteScreen> {
   List<dynamic> _invites = [];
-
+  List<dynamic> invitations = [];
   @override
   void initState() {
     super.initState();
@@ -69,7 +69,6 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
                                   )
                                 : Icon(Icons.refresh, size: 25),
                             onPressed: () {
-                              print(_invites);
                               setState(() {
                                 _invites = CalwinDatabase.getListInvites(
                                     widget.user.uid);
@@ -92,7 +91,6 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
   }
 
   Widget _buildInvitesList() {
-    _invites = CalwinDatabase.getListInvites(widget.user.uid);
     return ConstrainedBox(
       constraints: BoxConstraints(
           maxHeight: 0.95 * CheckInviteScreen.allowed, minHeight: 56.0),
@@ -146,6 +144,7 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
               onPressed: () async {
                 // TODO: Remove Invite
                 setState(() {
+                  CalwinDatabase.deleteInvite(widget.user.uid, invite['id']);
                   _invites = CalwinDatabase.getListInvites(widget.user.uid);
                 });
               }),

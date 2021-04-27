@@ -172,6 +172,15 @@ class CalwinDatabase {
     });
   }
 
+  static bool checkInv(Map<String, dynamic> inv) {
+    if (inviteInfo.length == 0) return true;
+    for (int i = 0; i < inviteInfo.length; i++) {
+      var cur = inviteInfo[i];
+      if (cur['id'] == inv['id']) return false;
+    }
+    return true;
+  }
+
   static Future<void> getInviteInfo(String userID) async {
     fetchInvites(userID);
     for (int i = 0; i < invitations.length; i++) {
@@ -181,7 +190,11 @@ class CalwinDatabase {
           .get()
           .then((value) {
         {
-          if (!inviteInfo.contains(value.data())) inviteInfo.add(value.data());
+          Map<String, dynamic> ids = value.data();
+          ids['id'] = invitations[i]['id'];
+          if (checkInv(ids)) {
+            inviteInfo.add(ids);
+          }
         }
       });
     }
@@ -191,5 +204,25 @@ class CalwinDatabase {
   static List<dynamic> getListInvites(String userID) {
     getInviteInfo(userID);
     return (inviteInfo == []) ? null : inviteInfo;
+  }
+
+  static Future<void> deleteInvite(String userID, String eventID) async {
+    if (invitations == null) return;
+    if (invitations.length == 0) return;
+    List<dynamic> updInvites = [];
+    int index = -1;
+    for (int i = 0; i < invitations.length; i++) {
+      var cc = invitations[i];
+      if (cc['id'] == eventID)
+        index = i;
+      else {
+        updInvites.add(invitations[i]);
+      }
+    }
+    if (index != -1) invitations.removeAt(index);
+    await _db
+        .collection('users')
+        .doc(userID)
+        .update({'invitations': updInvites});
   }
 }

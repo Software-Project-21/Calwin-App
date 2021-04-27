@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome,',
+        title: Text('Calwin',
             style: Theme.of(context).primaryTextTheme.headline1),
         actions: [
           Consumer<ThemeNotifier>(

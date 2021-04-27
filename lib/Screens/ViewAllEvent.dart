@@ -71,11 +71,13 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
                                 : Icon(Icons.refresh, size: 25),
                             onPressed: () {
                               setState(() {
-                                _events = CalwinDatabase.getListEvents(
-                                    widget.user.uid);
+                                _events = CalwinDatabase.getListEvents(widget.user.uid);
                                 // _buildEventList();
-                              });
-                            })),
+                              },
+                              );
+                            },
+                        ),
+                    ),
                   ],
                 ),
               ],

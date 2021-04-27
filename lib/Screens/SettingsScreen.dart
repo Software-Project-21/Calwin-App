@@ -162,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           _isSigningOut = false;
                         });
                         Navigator.of(context)
-                            .pushReplacement(_routeToSignInScreen());
+                            .pop(_routeToSignInScreen());
                       },
                     ),
                   ),

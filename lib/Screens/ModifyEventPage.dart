@@ -79,6 +79,7 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
           ),
           FormBuilder(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.always,
             child: Padding(
               padding: EdgeInsets.only(left: 10, right: 10, top: 30),
               child: Column(
@@ -87,6 +88,7 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
                     name: "title",
                     style: Theme.of(context).primaryTextTheme.bodyText2,
                     initialValue: widget.event['title'],
+                    validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                     decoration: InputDecoration(
                       labelText: 'Title',
                       labelStyle: Theme.of(context).accentTextTheme.bodyText1,
@@ -132,9 +134,10 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
                   GestureDetector(
                     onTap: () => _selectDate(0),
                     child: AbsorbPointer(
-                      child: TextField(
+                      child: FormBuilderTextField(
                         controller: _textEditingController1,
                         style: Theme.of(context).primaryTextTheme.bodyText2,
+                        validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(
                             hintText: 'Event Start Date & Time',
                             labelStyle:
@@ -160,9 +163,10 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
                   GestureDetector(
                     onTap: () => _selectDate(1),
                     child: AbsorbPointer(
-                      child: TextField(
+                      child: FormBuilderTextField(
                         style: Theme.of(context).primaryTextTheme.bodyText2,
                         controller: _textEditingController2,
+                        validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(
                             hintText: 'Event Finish Date & Time',
                             hintStyle:
@@ -245,7 +249,7 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
     DateTime pickedDate = await showModalBottomSheet<DateTime>(
       context: context,
       builder: (context) {
-        DateTime tempPickedDate = DateTime.now();
+        DateTime tempPickedDate = _startDateTime;
         return Container(
           height: 250,
           child: Column(
@@ -276,6 +280,8 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
               Expanded(
                 child: Container(
                   child: CupertinoDatePicker(
+                    initialDateTime: _startDateTime,
+                    minimumDate: _startDateTime,
                     mode: CupertinoDatePickerMode.dateAndTime,
                     onDateTimeChanged: (DateTime dateTime) {
                       tempPickedDate = dateTime;

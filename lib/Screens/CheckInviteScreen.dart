@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 
 class CheckInviteScreen extends StatefulWidget {
   final User user;
-  static double allowed;
-
   const CheckInviteScreen({Key key, this.user}) : super(key: key);
 
   @override
@@ -19,6 +17,8 @@ class CheckInviteScreen extends StatefulWidget {
 class _CheckInviteScreenState extends State<CheckInviteScreen> {
   List<dynamic> _invites = [];
   List<dynamic> invitations = [];
+  static double allowed;
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +29,7 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
         AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top -
         MediaQuery.of(context).padding.bottom;
-    CheckInviteScreen.allowed = availableHeight;
+    allowed = availableHeight;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: ListView(
@@ -57,25 +57,21 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
                   child: Text("Invites",
                       style: Theme.of(context).primaryTextTheme.headline1),
                 ),
-                Row(
-                  children: [
-                    Consumer<ThemeNotifier>(
-                        builder: (context, notifier, child) => IconButton(
-                            icon: notifier.isDarkTheme
-                                ? FaIcon(
-                                    Icons.refresh,
-                                    size: 25,
-                                    color: Colors.white,
-                                  )
-                                : Icon(Icons.refresh, size: 25),
-                            onPressed: () {
-                              setState(() {
-                                _invites = CalwinDatabase.getListInvites(
-                                    widget.user.uid);
-                              });
-                            })),
-                  ],
-                ),
+                Consumer<ThemeNotifier>(
+                    builder: (context, notifier, child) => IconButton(
+                        icon: notifier.isDarkTheme
+                            ? FaIcon(
+                                Icons.refresh,
+                                size: 25,
+                                color: Colors.white,
+                              )
+                            : Icon(Icons.refresh, size: 25),
+                        onPressed: () {
+                          setState(() {
+                            _invites = CalwinDatabase.getListInvites(widget.user.uid);
+                            print(_invites);
+                          });
+                        })),
               ],
             ),
           ),
@@ -93,7 +89,7 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
   Widget _buildInvitesList() {
     return ConstrainedBox(
       constraints: BoxConstraints(
-          maxHeight: 0.95 * CheckInviteScreen.allowed, minHeight: 56.0),
+          maxHeight: 0.95 * allowed, minHeight: 56.0),
       child: ListView(
         children: _invites
             .map((invite) => Container(
@@ -137,14 +133,17 @@ class _CheckInviteScreenState extends State<CheckInviteScreen> {
           IconButton(
               icon: Icon(CupertinoIcons.check_mark),
               onPressed: () {
-                // TODO: Accept Invite
+                CalwinDatabase.acceptInvite(invite, widget.user.uid);
+                CalwinDatabase.deleteInvite(widget.user.uid, invite['id']);
+                setState(() {
+                  _invites = CalwinDatabase.getListInvites(widget.user.uid);
+                });
               }),
           IconButton(
               icon: Icon(CupertinoIcons.clear),
-              onPressed: () async {
-                // TODO: Remove Invite
+              onPressed: () {
+                CalwinDatabase.deleteInvite(widget.user.uid, invite['id']);
                 setState(() {
-                  CalwinDatabase.deleteInvite(widget.user.uid, invite['id']);
                   _invites = CalwinDatabase.getListInvites(widget.user.uid);
                 });
               }),

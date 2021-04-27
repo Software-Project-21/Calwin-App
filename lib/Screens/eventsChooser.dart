@@ -36,9 +36,7 @@ class _eventsChooserState extends State<eventsChooser> {
     if(widget.selectedDayPassed!=null){
       DateTime temp =  widget.selectedDayPassed;
       _startDateTime = DateTime(temp.year,temp.month,temp.day);
-      _finishDateTime = temp;
       _textEditingController1.text = temp.toString().substring(0,16);
-      _textEditingController2.text = temp.toString().substring(0,16);
     }
 
     super.initState();
@@ -92,14 +90,17 @@ class _eventsChooserState extends State<eventsChooser> {
           ),
           FormBuilder(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.disabled,
             child: Padding(
               padding: EdgeInsets.only(left: 10, right: 10, top: 30),
               child: Column(
                 children: [
                   FormBuilderTextField(
                     name: "title",
+                    minLines: 1,
+                    maxLines: 2,
                     style: Theme.of(context).primaryTextTheme.bodyText2,
-                    // initialValue: widget.event?.title,
+                    validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                     decoration: InputDecoration(
                       labelText: 'Title',
                       labelStyle: Theme.of(context).accentTextTheme.bodyText1,
@@ -145,7 +146,8 @@ class _eventsChooserState extends State<eventsChooser> {
                   GestureDetector(
                     onTap: () => _selectDate(0),
                     child: AbsorbPointer(
-                      child: TextField(
+                      child: FormBuilderTextField(
+                        validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         controller: _textEditingController1,
                         style: Theme.of(context).primaryTextTheme.bodyText2,
                         decoration: InputDecoration(
@@ -170,7 +172,10 @@ class _eventsChooserState extends State<eventsChooser> {
                   GestureDetector(
                     onTap: () => _selectDate(1),
                     child: AbsorbPointer(
-                      child: TextField(
+                      child: FormBuilderTextField(
+                        validator: FormBuilderValidators.compose(
+                            [FormBuilderValidators.required(context),],
+                        ),
                         style: Theme.of(context).primaryTextTheme.bodyText2,
                         controller: _textEditingController2,
                         decoration: InputDecoration(
@@ -218,24 +223,25 @@ class _eventsChooserState extends State<eventsChooser> {
               ),
               onPressed: () async {
                 _formKey.currentState.save();
-                final data =
-                    Map<String, dynamic>.from(_formKey.currentState.value);
-                data["date"] = _selectedDate;
-                realEmails.clear();
-                await getActualEmails();
-                var curevent = <String, dynamic>{
-                  'id': uuid.v4(),
-                  'title': data['title'],
-                  'description': data['description'],
-                  'startTime': _startDateTime,
-                  'endTime': _finishDateTime,
-                  'attendeeEmail': realEmails
-                };
-
-                CalwinDatabase.addEvents(curevent, widget.user.uid);
-                CalwinDatabase.sendInvites(curevent['id'],
-                    widget.user.displayName, widget.user.email, emails);
-                Navigator.pop(context);
+                if (_formKey.currentState.validate()) {
+                  final data =
+                  Map<String, dynamic>.from(_formKey.currentState.value);
+                  data["date"] = _selectedDate;
+                  realEmails.clear();
+                  await getActualEmails();
+                  var curevent = <String, dynamic>{
+                    'id': uuid.v4(),
+                    'title': data['title'],
+                    'description': data['description'],
+                    'startTime': _startDateTime,
+                    'endTime': _finishDateTime,
+                    'attendeeEmail': realEmails
+                  };
+                  CalwinDatabase.addEvents(curevent, widget.user.uid);
+                  CalwinDatabase.sendInvites(curevent['id'],
+                      widget.user.displayName, widget.user.email, emails);
+                  Navigator.pop(context);
+                }
               },
               child: Text(
                 "Save",
@@ -252,7 +258,8 @@ class _eventsChooserState extends State<eventsChooser> {
     DateTime pickedDate = await showModalBottomSheet<DateTime>(
       context: context,
       builder: (context) {
-        DateTime tempPickedDate = DateTime.now();
+        DateTime tempPickedDate = _startDateTime;
+        print(_startDateTime);
         return Container(
           height: 250,
           child: Column(
@@ -288,6 +295,8 @@ class _eventsChooserState extends State<eventsChooser> {
                       brightness: Theme.of(context).brightness,
                     ),
                     child: CupertinoDatePicker(
+                      initialDateTime: _startDateTime,
+                      minimumDate: _startDateTime,
                       backgroundColor: Theme.of(context).primaryColor,
                       mode: CupertinoDatePickerMode.dateAndTime,
                       onDateTimeChanged: (DateTime dateTime) {

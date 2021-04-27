@@ -72,7 +72,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Text("Calwin",
+                  child: Text("Calendar",
                       style: Theme.of(context).primaryTextTheme.headline1),
                 ),
                 Row(
@@ -158,7 +158,6 @@ class _CalenderScreenState extends State<CalenderScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
   void dispose() {
     _calendarController.dispose();
     super.dispose();
@@ -170,7 +169,9 @@ class _CalenderScreenState extends State<CalenderScreen> {
       DateTime selectedDate = DateTime(date.year, date.month, date.day);
       if (_events == null) {
         _events = CalwinDatabase.getAllEvents(_user.uid);
-        _selectedEvents = _events[selectedDate];
+        if (_events != null) {
+          _selectedEvents = _events[selectedDate];
+        }
       } else {
         _selectedEvents = _events[selectedDate];
       }
@@ -354,7 +355,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                           offset: new Offset(0.0, 5))
                     ],
                   ),
-                  child: singleTile(event),
+                  child: (event!=null)?singleTile(event):Container(),
                 ))
             .toList(),
       ),
@@ -377,6 +378,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                   style: Theme.of(context).primaryTextTheme.bodyText1),
               ),
               SizedBox(width: 10,),
+              event['primary']==true?
               Row(children: [
                 IconButton(
                     icon: Icon(FontAwesomeIcons.edit, color:  Theme.of(context).accentColor,),
@@ -401,7 +403,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                         // _calendarController.dispose()
                       });
                     }),
-              ]),
+              ]):SizedBox(width: 10,),
             ],
           ),
           Container(

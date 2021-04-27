@@ -32,7 +32,7 @@ class CalwinDatabase {
           'description': event['description'],
           'startTime': event['startTime'],
           'endTime': event['endTime'],
-          'attendeeEmail': event['attendeeEmail']
+          'primary': true,
         }
       ])
     });
@@ -51,9 +51,7 @@ class CalwinDatabase {
   static Future<List<dynamic>> getEvents(String user_id) async {
     await _db.collection('users').doc(user_id).get().then((value) {
       {
-        //print(value.data()['events']);
         events = value.data()['events'];
-        //print(events);
         return events;
       }
     });
@@ -116,6 +114,7 @@ class CalwinDatabase {
         updEvents.add(events[i]);
     }
     await _db.collection('users').doc(userID).update({'events': updEvents});
+    await _db.collection('events').doc(eventID).delete();
   }
 
   static Future<void> modifyEvent(
@@ -189,7 +188,7 @@ class CalwinDatabase {
           .doc(invitations[i]['id'])
           .get()
           .then((value) {
-        {
+            {
           Map<String, dynamic> ids = value.data();
           ids['id'] = invitations[i]['id'];
           if (checkInv(ids)) {
@@ -203,26 +202,41 @@ class CalwinDatabase {
 
   static List<dynamic> getListInvites(String userID) {
     getInviteInfo(userID);
-    return (inviteInfo == []) ? null : inviteInfo;
+    return inviteInfo;
   }
 
+  static Future<void> acceptInvite(Map<String,dynamic> invite,String userID) async{
+    await _db.collection('users').doc(userID).update({
+      'events': FieldValue.arrayUnion([
+        {
+          'id': invite['id'],
+          'title': invite['title'],
+          'description': invite['description'],
+          'startTime': invite['startTime'],
+          'endTime': invite['endTime'],
+          'primary': false,
+        }
+      ])
+    });
+    await _db
+        .collection('events')
+        .doc(invite['id'])
+        .update({'acceptedUsers': FieldValue.arrayUnion([userID])});
+  }
+
+
   static Future<void> deleteInvite(String userID, String eventID) async {
-    if (invitations == null) return;
-    if (invitations.length == 0) return;
     List<dynamic> updInvites = [];
-    int index = -1;
     for (int i = 0; i < invitations.length; i++) {
       var cc = invitations[i];
       if (cc['id'] == eventID)
-        index = i;
+        continue;
       else {
         updInvites.add(invitations[i]);
       }
     }
-    if (index != -1) invitations.removeAt(index);
-    await _db
-        .collection('users')
-        .doc(userID)
-        .update({'invitations': updInvites});
+    await _db.collection('users').doc(userID).update({'invitations': updInvites});
+    inviteInfo.clear();
+    getInviteInfo(userID);
   }
 }

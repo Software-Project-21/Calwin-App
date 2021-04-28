@@ -10,18 +10,18 @@ import 'package:provider/provider.dart';
 List<String> emails = [];
 List<String> realEmails = [];
 
-class eventsChooser extends StatefulWidget {
+class EventsChooser extends StatefulWidget {
   final User user;
   final DateTime selectedDayPassed;
+  final List<String> invitees;
+  const EventsChooser({Key key, this.user, this.selectedDayPassed, this.invitees}) : super(key: key);
 
-  const eventsChooser({Key key, this.user, this.selectedDayPassed}) : super(key: key);
-
-  _eventsChooserState createState() => _eventsChooserState();
+  _EventsChooserState createState() => _EventsChooserState();
 }
 
 var uuid = Uuid();
 
-class _eventsChooserState extends State<eventsChooser> {
+class _EventsChooserState extends State<EventsChooser> {
   List<String> _emails;
   final _formKey = GlobalKey<FormBuilderState>();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -296,8 +296,8 @@ class _eventsChooserState extends State<eventsChooser> {
                       brightness: Theme.of(context).brightness,
                     ),
                     child: CupertinoDatePicker(
-                      initialDateTime: _startDateTime,
-                      minimumDate: _startDateTime,
+                      initialDateTime: a==1?_startDateTime:DateTime.now(),
+                      minimumDate: a==1?_startDateTime:null,
                       backgroundColor: Theme.of(context).primaryColor,
                       mode: CupertinoDatePickerMode.dateAndTime,
                       onDateTimeChanged: (DateTime dateTime) {
@@ -369,22 +369,23 @@ class _EmailInputState extends State<EmailInput> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 ...emails
                     .map(
                       (email) => Chip(
                         avatar: CircleAvatar(
-                          backgroundColor: Colors.black,
+                          backgroundColor: Theme.of(context).primaryColor,
                           child: Text(
                             email.substring(0, 1),
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color:Theme.of(context).accentColor),
                           ),
                         ),
-                        labelPadding: EdgeInsets.all(1),
-                        backgroundColor: Colors.grey,
+                        labelPadding: EdgeInsets.all(2),
+                        backgroundColor: kRed,
                         label: Text(
-                          email,
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          "  "+email+"  ",
+                          style: Theme.of(context).primaryTextTheme.bodyText2,
                         ),
                         onDeleted: () => {
                           setState(() {

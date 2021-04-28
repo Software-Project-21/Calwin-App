@@ -361,14 +361,14 @@ class _EmailInputState extends State<EmailInput> {
                         .map(
                           (email) => Chip(
                         avatar: CircleAvatar(
-                          backgroundColor: Colors.black,
+                          backgroundColor: Theme.of(context).primaryColor,
                           child: Text(
                             email.substring(0, 1),
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color:  Theme.of(context).accentColor),
                           ),
                         ),
-                        labelPadding: EdgeInsets.all(1),
-                        backgroundColor: Colors.grey,
+                        labelPadding: EdgeInsets.all(2),
+                        backgroundColor: kRed,
                         label: Text(
                           email,
                           style: TextStyle(fontSize: 16, color: Colors.white),

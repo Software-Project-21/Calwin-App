@@ -130,7 +130,6 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children:[
               Container(
                 width: MediaQuery.of(context).size.width*0.6,
@@ -138,7 +137,7 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
                   style: Theme.of(context).primaryTextTheme.bodyText1),
               ),
               SizedBox(width: 10,),
-              Row(
+              event['primary']==true?Row(
                   children: [
                 IconButton(
                     icon: Icon(FontAwesomeIcons.edit,
@@ -161,18 +160,19 @@ class _ViewAllEventsState extends State<ViewAllEvents> {
                     onPressed: () async {
                       CalwinDatabase.deleteEvent(event['id'], widget.user.uid);
                       setState(() {
-                        _events = CalwinDatabase.getListEvents(widget.user.uid);
+                        _events.removeWhere((element) => event == element);
                       });
+                      _events = CalwinDatabase.getListEvents(widget.user.uid);
                     }),
-              ]),
+              ]):Container(),
             ],
           ),
-          Divider(),
-          Container(
-            width: MediaQuery.of(context).size.width*0.85,
-            child: Text(event['description'] == null ? "" : event['description'],
-                style: Theme.of(context).primaryTextTheme.bodyText2),
-          ),
+          SizedBox(height: 5,),
+          // Container(
+          //   width: MediaQuery.of(context).size.width*0.85,
+          //   child: Text(event['description'] == null ? "" : event['description'],
+          //       style: Theme.of(context).primaryTextTheme.bodyText2),
+          // ),
         ],
       ),
     );

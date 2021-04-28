@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               PageTransition(
                                   type: PageTransitionType.fade,
                                   duration: Duration(milliseconds: 300),
-                                  child: eventsChooser(
+                                  child: EventsChooser(
                                     user: widget.user,
                                   )));
                         },

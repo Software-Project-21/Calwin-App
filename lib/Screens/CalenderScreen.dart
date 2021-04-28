@@ -139,11 +139,11 @@ class _CalenderScreenState extends State<CalenderScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: kRed,
+        backgroundColor: Theme.of(context).accentColor,
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => eventsChooser(user: widget._user, selectedDayPassed: _selectedDay,),
+              builder: (context) => EventsChooser(user: widget._user, selectedDayPassed: _selectedDay,),
             ),
           );
           setState(() {
@@ -151,13 +151,15 @@ class _CalenderScreenState extends State<CalenderScreen> {
           });
         },
         child: Icon(
-          Icons.add,
-          color: Colors.white,
+          Icons.add_circle_outline_rounded,
+          size: 55,
+          color: Theme.of(context).primaryColor,
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+
   void dispose() {
     _calendarController.dispose();
     super.dispose();
@@ -408,7 +410,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
           ),
           Container(
             width: MediaQuery.of(context).size.width*0.85,
-            child: Text(event['description'],
+            child: Text(event['description']==null?"":event['description'],
                 style: Theme.of(context).primaryTextTheme.bodyText2),
           ),
         ],

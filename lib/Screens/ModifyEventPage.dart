@@ -34,8 +34,8 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
   void initState() {
     emails.clear();
     // emails = widget.event['attendeeEmail'];
-    _textEditingController1.text = widget.event['startTime'].toDate().toString();
-    _textEditingController2.text = widget.event['endTime'].toDate().toString();
+    _textEditingController1.text = widget.event['startTime'].toDate().toString().substring(0,16);
+    _textEditingController2.text = widget.event['endTime'].toDate().toString().substring(0,16);
     _startDateTime = widget.event['startTime'].toDate();
     _finishDateTime = widget.event['endTime'].toDate();
     super.initState();
@@ -259,13 +259,13 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     CupertinoButton(
-                      child: Text('Cancel'),
+                      child: Text('Cancel',style: TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold)),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     CupertinoButton(
-                      child: Text('Done'),
+                      child: Text('Done', style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),),
                       onPressed: () {
                         Navigator.of(context).pop(tempPickedDate);
                       },
@@ -279,13 +279,18 @@ class _ModifyEventScreenState extends State<ModifyEventScreen> {
               ),
               Expanded(
                 child: Container(
-                  child: CupertinoDatePicker(
-                    initialDateTime: _startDateTime,
-                    minimumDate: _startDateTime,
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    onDateTimeChanged: (DateTime dateTime) {
-                      tempPickedDate = dateTime;
-                    },
+                  child: CupertinoTheme(
+                    data: CupertinoThemeData(
+                      brightness: Theme.of(context).brightness,
+                    ),
+                    child: CupertinoDatePicker(
+                      initialDateTime: a==1?_startDateTime:DateTime.now(),
+                      minimumDate: a==1?_startDateTime:null,
+                      mode: CupertinoDatePickerMode.dateAndTime,
+                      onDateTimeChanged: (DateTime dateTime) {
+                        tempPickedDate = dateTime;
+                      },
+                    ),
                   ),
                 ),
               ),

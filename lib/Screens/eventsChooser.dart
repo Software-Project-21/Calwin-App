@@ -37,6 +37,8 @@ class _eventsChooserState extends State<eventsChooser> {
       DateTime temp =  widget.selectedDayPassed;
       _startDateTime = DateTime(temp.year,temp.month,temp.day);
       _textEditingController1.text = temp.toString().substring(0,16);
+    }else{
+      _startDateTime = DateTime.now();
     }
 
     super.initState();
@@ -259,7 +261,6 @@ class _eventsChooserState extends State<eventsChooser> {
       context: context,
       builder: (context) {
         DateTime tempPickedDate = _startDateTime;
-        print(_startDateTime);
         return Container(
           height: 250,
           child: Column(
